@@ -1,0 +1,53 @@
+<template>
+	<div :class="[$style.root, attrsClass]">
+		<input
+			:class="$style.input"
+			v-model="model"
+			v-bind="attrsRest"
+			type="text"
+		/>
+		<Icon
+			:class="$style.icon"
+			v-if="icon"
+			:name="icon"
+		/>
+	</div>
+</template>
+
+<script setup lang="ts">
+defineProps<{
+	icon?: string;
+}>();
+
+defineOptions({
+	inheritAttrs: false,
+});
+
+const { class: attrsClass, ...attrsRest } = useAttrs();
+const model = defineModel();
+</script>
+
+<style module>
+.root {
+	display: flex;
+	align-items: center;
+	border: 1px solid theme("colors.gray.300");
+	border-radius: theme("borderRadius.md");
+	padding: 0.5rem 1rem;
+	overflow: hidden;
+
+	&:focus-within {
+		border-color: theme("colors.primary.500");
+	}
+}
+
+.input {
+	display: block;
+	width: 100%;
+	background-color: transparent;
+}
+
+.icon {
+	margin-left: auto;
+}
+</style>

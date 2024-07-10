@@ -1,0 +1,20 @@
+.scale-up-enter-active,
+.scale-up-leave-active {
+	transition: 0.3s;
+}
+.scale-up-enter-from,
+.scale-up-leave-to {
+	opacity: 0;
+	transform: scale(0.9);
+}
+
+.descend-enter-active,
+.descend-leave-active {
+	transition: 0.3s;
+}
+
+.descend-enter-from,
+.descend-leave-to {
+	opacity: 0;
+	transform: translateY(-10%);
+}
