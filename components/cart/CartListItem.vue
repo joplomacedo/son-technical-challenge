@@ -1,127 +1,66 @@
 <template>
-	<li
-		:class="[
-			$style.root,
-			{
-				[$style['is-requestingChanges']]: isRequestingQuantityChange,
-				[$style['is-invalidQuantityWarningVisible']]:
-					isInvalidQuantityWarningVisible,
-				[$style['is-itemMutating']]: isItemMutating,
-				[$style['is-cartBusy']]: isCartBusy,
-			},
-		]"
-	>
+	<li :class="[$style.root, {}]">
 		<div :class="$style.main">
-			<div :class="$style.imageBox">
-				<NuxtImg
-					:class="$style.image"
-					:src="item.product.thumbnail"
-					:alt="item.product.name"
-					:width="imgSize"
-					:height="imgSize"
-					:placeholder="[imgSize, imgSize, 75, 5]"
-					:placeholder-class="$style['is-placeholder']"
-					fit="cover"
-				/>
-			</div>
-			<div :class="$style.content">
-				<div>
-					<p :class="$style.name">{{ item.product.name }}</p>
-					<p :class="$style.price">{{ $formatPrice(item.product.price) }}</p>
-				</div>
-
-				<div :class="$style.quantityAndActions">
-					<div :class="$style.actions">
-						<BaseButton
-							@click="deleteItem"
-							:class="$style.removeBtn"
-							:disabled="isCartBusy"
-							size="xs"
-							shape="circle"
-						>
-							<BaseIcon name="Trash" />
-						</BaseButton>
-
-						<div :class="$style.quantityActions">
-							<BaseButton
-								@click="() => handleQuantityInc(-1)"
-								:class="$style.quantityBtn"
-								:disabled="isCartBusy || requestedQuantity < 1"
-								size="xs"
-								shape="circle"
-							>
-								<BaseIcon name="Minus" />
-							</BaseButton>
-							<BaseButton
-								@click="() => handleQuantityInc(1)"
-								:class="$style.quantityBtn"
-								:disabled="isCartBusy"
-								size="xs"
-								shape="circle"
-							>
-								<BaseIcon name="Plus" />
-							</BaseButton>
-						</div>
-					</div>
-
-					<p :class="$style.quantity">
-						{{ item.quantity }}
-					</p>
-
-					<Transition name="scale-up">
-						<div
-							:class="$style.requestedChanges"
-							v-if="isRequestingQuantityChange"
-						>
-							<BaseIcon name="ArrowLongRight" />
-
-							<span :class="$style.requestedChanges__quantity">{{
-								requestedQuantity
-							}}</span>
-						</div>
-					</Transition>
-
-					<Transition name="scale-up">
-						<BaseSpinner
-							v-if="isItemMutating"
-							size="sm"
-						/>
-					</Transition>
-				</div>
-			</div>
-		</div>
-
-		<div
-			:class="$style.invalidQuantityWarning"
-			v-if="isInvalidQuantityWarningVisible"
-		>
-			<BaseIcon
-				:class="$style.invalidQuantityWarning__icon"
-				name="ExclamationTriangle"
+			<NuxtImg
+				:class="$style.image"
+				:src="item.product.thumbnail"
+				:alt="item.product.name"
+				:width="imgSize"
+				:height="imgSize"
+				:placeholder="[imgSize, imgSize, 75, 5]"
+				:placeholder-class="$style['is-placeholder']"
+				fit="cover"
 			/>
+			<div>
+				<p :class="$style.name">{{ item.product.name }}</p>
+				<p :class="$style.price">{{ $formatPrice(item.product.price) }}</p>
 
-			<div :class="$style.invalidQuantityWarning__content">
-				<span>
-					There {{ stockQuantity === 1 ? "is" : "are" }} just
-					{{ stockQuantity }} {{ stockQuantity === 1 ? "item" : "items" }} in
-					stock.
-				</span>
-
-				<div :class="$style.invalidQuantityWarning__actions">
-					<button
-						v-if="props.item.quantity !== stockQuantity"
-						@click="() => handleQuantityUpdate(stockQuantity)"
-						:class="$style.invalidQuantityWarning__actionBtn"
+				<div
+					:class="[
+						$style.stepper,
+						{
+							[$style['is-invalid']]: !isDisplayQuantityValid,
+						},
+					]"
+				>
+					<BaseButton
+						:class="$style.stepper__btn"
+						@click="handleQuantityInc(-1)"
+						:disabled="isCartBusy || displayQuantity < 1"
 					>
-						Update to {{ stockQuantity }}
-					</button>
-					<button
-						@click="cancelQuantityUpdate"
-						:class="$style.invalidQuantityWarning__actionBtn"
+						<BaseIcon name="Minus" />
+					</BaseButton>
+					<div :class="[$style.stepper__value]">
+						{{ displayQuantity }}
+					</div>
+					<BaseButton
+						:class="$style.stepper__btn"
+						@click="handleQuantityInc(1)"
+						:disabled="isCartBusy"
 					>
-						Cancel update
-					</button>
+						<BaseIcon name="Plus" />
+					</BaseButton>
 				</div>
+
+				<div v-if="isStockVisible">
+					<div>Only {{ stockQuantity }} left</div>
+					<div v-if="stockQuantity !== item.quantity">
+						<span @click="() => updateItemQuantity(stockQuantity)"
+							>Update to {{ stockQuantity }}</span
+						>
+					</div>
+				</div>
+
+				<BaseButton
+					:disabled="isCartBusy"
+					@click="deleteItem"
+				>
+					Delete
+				</BaseButton>
+
+				<BaseSpinner v-if="isItemMutating" />
+
+				<p>{{ $formatPrice(item.total) }}</p>
 			</div>
 		</div>
 	</li>
@@ -129,8 +68,11 @@
 
 <script setup lang="ts">
 import type { CartItem } from "@/queries/cart";
-import { useUpdateItemMutation, useDeleteItemMutation } from "~/queries/cart";
-
+import {
+	useUpdateItemMutation,
+	useDeleteItemMutation,
+	statusCodes,
+} from "~/queries/cart";
 const props = defineProps<{
 	item: CartItem;
 }>();
@@ -158,55 +100,37 @@ const isItemMutating = computed(() => {
 	);
 });
 
-const requestedQuantity = ref(props.item.quantity);
+const displayQuantity = ref(props.item.quantity);
 
 const stockQuantity = computed(() => {
 	return props.item.product.stockQuantity;
 });
 
-const shouldConsiderStockQuantity = ref(false);
-
-const isRequestingQuantityChange = computed(() => {
-	return requestedQuantity.value !== props.item.quantity;
+const isCartQuantityValid = computed(() => {
+	return stockQuantity.value >= props.item.quantity;
 });
 
-const isSavedQuantityValid = computed(() => {
-	return props.item.quantity <= stockQuantity.value;
+const isDisplayQuantityValid = computed(() => {
+	return stockQuantity.value >= displayQuantity.value;
 });
 
-const isRequestedQuantityValid = computed(() => {
-	return requestedQuantity.value <= stockQuantity.value;
-});
-
-const isInvalidQuantityWarningVisible = computed(() => {
+const isStockVisible = computed(() => {
 	return (
-		shouldConsiderStockQuantity.value &&
-		(!isSavedQuantityValid.value || !isRequestedQuantityValid.value)
+		!isCartQuantityValid.value ||
+		updateItemQuantityError.value?.data.statusCode ===
+			statusCodes.useUpdateItemMutation.invalidQuantity
 	);
 });
-
-const statusCodes = {
-	invalidQuantity: 422,
-};
 
 function updateItemQuantity(quantity: number) {
 	return updateItemQuantityMutate(quantity, {
 		onError(error) {
-			if (error.data.statusCode === statusCodes.invalidQuantity) {
-				shouldConsiderStockQuantity.value = true;
+			if (
+				error.data.statusCode ===
+				statusCodes.useUpdateItemMutation.invalidQuantity
+			) {
+				displayQuantity.value = props.item.quantity;
 			}
-		},
-		onSuccess: (data) => {
-			const item = data.items.find(
-				(item) => item.productId === props.item.productId
-			);
-
-			if (!item) {
-				return;
-			}
-
-			shouldConsiderStockQuantity.value = false;
-			requestedQuantity.value = item.quantity;
 		},
 	});
 }
@@ -219,64 +143,29 @@ const debouncedUpdate = debounce((newQuantity) => {
 	}
 }, 800);
 
-const isHandleQuantityClick = ref(false);
+const handleQuantityClick = timeoutFlag();
 
 const handleQuantityInc = (inc: number) => {
-	isHandleQuantityClick.value = true;
-	setTimeout(() => {
-		isHandleQuantityClick.value = false;
-	});
+	handleQuantityClick.flag();
 
-	const newQty = requestedQuantity.value + inc;
-	requestedQuantity.value = newQty;
+	displayQuantity.value += inc;
 
-	if (newQty === props.item.quantity) {
+	if (displayQuantity.value === props.item.quantity) {
 		debouncedUpdate.cancel();
 	} else {
-		debouncedUpdate(newQty);
+		debouncedUpdate(displayQuantity.value);
 	}
 };
 
-function handleQuantityUpdate(newQuantity: number) {
-	requestedQuantity.value = newQuantity;
-
-	if (newQuantity !== props.item.quantity) {
-		debouncedUpdate(newQuantity);
-	}
-}
-
-function cancelQuantityUpdate() {
-	requestedQuantity.value = props.item.quantity;
-	shouldConsiderStockQuantity.value = false;
-}
-
-const activityEvents = ["click", "keydown"];
-
-const flushOnUnrelatedActivity = () => {
-	if (isHandleQuantityClick.value) {
+const flushOnUnrelatedClick = () => {
+	if (handleQuantityClick.flagged()) {
 		return;
 	}
 
 	debouncedUpdate.flush();
 };
 
-onMounted(() => {
-	activityEvents.forEach((event) => {
-		document.addEventListener(event, flushOnUnrelatedActivity);
-	});
-});
-
-onUnmounted(() => {
-	activityEvents.forEach((event) => {
-		document.removeEventListener(event, flushOnUnrelatedActivity);
-	});
-});
-
-onMounted(() => {
-	if (props.item.quantity > stockQuantity.value) {
-		shouldConsiderStockQuantity.value = true;
-	}
-});
+useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 </script>
 
 <style module>
@@ -289,18 +178,27 @@ onMounted(() => {
 	gap: theme("spacing.4");
 }
 
-.imageBox {
-	width: var(--size-img);
-	height: var(--size-img);
+.stepper {
+	display: flex;
+	align-items: center;
+}
+.stepper__btn {
+}
+.stepper__value {
+	width: 2.2em;
+	text-align: center;
+}
 
-	border-radius: theme("borderRadius.md");
-	background-color: theme("colors.gray.100");
-	overflow: hidden;
-	padding: theme("spacing.4");
-	flex-shrink: 0;
+.stepper.is-invalid {
 }
 
 .image {
+	width: var(--size-img);
+	height: var(--size-img);
+	border-radius: theme("borderRadius.md");
+	background-color: theme("colors.gray.100");
+	padding: theme("spacing.4");
+	flex-shrink: 0;
 	transition: filter 0.3s;
 
 	&.is-placeholder {
