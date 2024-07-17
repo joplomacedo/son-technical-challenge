@@ -7,12 +7,14 @@
 			{{ label }}
 		</div>
 		<div><slot /></div>
-		<div
-			v-if="error"
-			:class="$style.error"
-		>
-			{{ error }}
-		</div>
+		<Transition name="slide-down">
+			<div
+				v-if="error"
+				:class="$style.error"
+			>
+				{{ error }}
+			</div>
+		</Transition>
 	</div>
 </template>
 
