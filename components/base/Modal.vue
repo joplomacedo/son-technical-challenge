@@ -63,6 +63,7 @@ const widthCssVar = computed(() => {
 	box-shadow: theme("boxShadow.md");
 	animation: enter 0.3s;
 	width: v-bind(widthCssVar);
+	border-top: 6px solid theme("colors.gray.800");
 }
 
 @keyframes enter {
