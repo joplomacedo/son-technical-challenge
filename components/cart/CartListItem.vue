@@ -55,7 +55,7 @@
 					:disabled="isCartBusy"
 					@click="deleteItem"
 				>
-					Delete
+					<BaseIcon name="Trash" />
 				</BaseButton>
 
 				<BaseSpinner v-if="isItemMutating" />
@@ -100,7 +100,14 @@ const isItemMutating = computed(() => {
 	);
 });
 
-const displayQuantity = ref(props.item.quantity);
+const displayQuantity = ref<number>(props.item.quantity);
+
+watch(
+	() => props.item.quantity,
+	(newValue) => {
+		displayQuantity.value = newValue;
+	}
+);
 
 const stockQuantity = computed(() => {
 	return props.item.product.stockQuantity;
@@ -178,6 +185,10 @@ useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 	gap: theme("spacing.4");
 }
 
+.name {
+	font-weight: theme("fontWeight.semibold");
+}
+
 .stepper {
 	display: flex;
 	align-items: center;
@@ -190,6 +201,8 @@ useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 }
 
 .stepper.is-invalid {
+	.stepper__value {
+	}
 }
 
 .image {
