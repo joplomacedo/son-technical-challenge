@@ -103,7 +103,7 @@ function useAddItemMutation(productId: string) {
 
 	debugger;
 	return useMutation({
-		mutationKey: [user.value.id, "cart", "items", "add"],
+		mutationKey: [user.value.id, "cart", "items", productId, "add"],
 		mutationFn: (quantity: number) =>
 			$fetch("/api/carts/items/add", {
 				method: "post",
