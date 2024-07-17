@@ -2,6 +2,7 @@
 	<div
 		:class="$style.overlay"
 		@click="emit('close')"
+		:data-variant-width="props.width"
 	>
 		<div
 			:class="$style.modal"
@@ -15,7 +16,7 @@
 <script setup lang="ts">
 const props = withDefaults(
 	defineProps<{
-		width?: "sm" | "md" | "lg" | number;
+		width?: number | string;
 	}>(),
 	{
 		width: "md",
@@ -32,7 +33,8 @@ const widthCssVar = computed(() => {
 			sm: "350px",
 			md: "475px",
 			lg: "750px",
-		}[props.width] ?? props.width + "px"
+		}[props.width] ??
+		(typeof props.width === "number" ? props.width + "px" : props.width)
 	);
 });
 </script>

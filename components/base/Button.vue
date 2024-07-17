@@ -50,6 +50,7 @@ withDefaults(
 </script>
 
 <style module>
+/* TODO: loading and disabled states conflict. fix */
 /* TODO: different shapes should have same heights if same size */
 /* Default State */
 .root {

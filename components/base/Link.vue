@@ -2,6 +2,7 @@
 	<NuxtLink
 		:class="$style.root"
 		v-bind="props"
+		:data-variant-underline="underline"
 	>
 		<slot />
 	</NuxtLink>
@@ -10,13 +11,25 @@
 <script setup lang="ts">
 import type { NuxtLinkProps } from "#app";
 
-const props = defineProps<NuxtLinkProps>();
+const props = withDefaults(
+	defineProps<
+		NuxtLinkProps & {
+			underline?: boolean;
+		}
+	>(),
+	{
+		underline: true,
+	}
+);
 </script>
 
 <style module>
 .root {
 	color: theme("colors.primary.500");
-	text-decoration: underline;
 	cursor: pointer;
+}
+
+.root[data-variant-underline="true"] {
+	text-decoration: underline;
 }
 </style>
