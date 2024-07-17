@@ -108,9 +108,9 @@
 				</div>
 			</div>
 
-			<CartModalEmail
-				v-if="isEmailModalOpen"
-				@close="handleCartModalEmailClose"
+			<CartModalEmailForm
+				v-if="isEmailModalFormOpen"
+				@close="handlModalEmailFormClose"
 			/>
 		</div>
 	</div>
@@ -137,7 +137,7 @@ const { data: cart, status: cartStatus } = useCartQuery();
 const { data: shippingMethods, status: shippingMethodsStatus } =
 	useShippingMethodsQuery();
 
-const isEmailModalOpen = ref(false);
+const isEmailModalFormOpen = ref(false);
 const isDeletedItemsOpen = ref(false);
 
 watch(deletedItems, (deletedItems) => {
@@ -149,28 +149,31 @@ watch(deletedItems, (deletedItems) => {
 const isCheckoutButtonLoading = ref(false);
 
 const handleCheckoutButtonClick = () => {
-	isCheckoutButtonLoading.value = true;
+	if (!user.value.email) {
+		isCheckoutButtonLoading.value = true;
 
+		// intentional delay for ux purposes
+		setTimeout(() => {
+			isEmailModalFormOpen.value = true;
+		}, 600);
+
+		return;
+	}
+
+	alert("Move to checkout!");
 	setTimeout(() => {
-		if (!user.value.email) {
-			isEmailModalOpen.value = true;
-		} else {
-			alert("Move to checkout!");
-			setTimeout(() => {
-				window.location.reload();
-			}, 300);
-		}
-	}, 600);
+		window.location.reload();
+	}, 300);
 };
 
-function handleCartModalEmailClose() {
+function handlModalEmailFormClose() {
 	if (user.value.email) {
 		alert("Move to checkout!");
 	} else {
 		isCheckoutButtonLoading.value = false;
 	}
 
-	isEmailModalOpen.value = false;
+	isEmailModalFormOpen.value = false;
 }
 
 const criticalComponents = [cartStatus, shippingMethodsStatus];

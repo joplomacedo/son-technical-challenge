@@ -1,3 +1,9 @@
+const statusCodes = {
+	useUpdateItemMutation: {
+		invalidQuantity: 422,
+	},
+} as const;
+
 function useCartQuery() {
 	const user = useUser();
 	const cartQueryKey = [user.value.id, "cart"];
@@ -40,7 +46,9 @@ function useUpdateItemMutation(productId: string) {
 		},
 
 		onError({ data: error }: any) {
-			if (error.statusCode === 422) {
+			if (
+				error.statusCode === statusCodes.useUpdateItemMutation.invalidQuantity
+			) {
 				queryClient.setQueryData([user.value.id, "cart"], (cart: Cart) => {
 					return {
 						...cart,
@@ -102,7 +110,6 @@ function useAddItemMutation(productId: string) {
 	const queryClient = useQueryClient();
 	const user = useUser();
 
-	debugger;
 	return useMutation({
 		mutationKey: [user.value.id, "cart", "items", productId, "add"],
 		mutationFn: (quantity: number) =>
@@ -142,6 +149,7 @@ export {
 	useUpdateItemMutation,
 	useDeleteItemMutation,
 	useAddItemMutation,
+	statusCodes,
 };
 
 export type {

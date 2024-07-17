@@ -8,6 +8,8 @@ export default defineNuxtConfig({
 		"@hebilicious/vue-query-nuxt",
 		"@nuxt/image",
 		"floating-vue/nuxt",
+		"@vueuse/nuxt",
+		//review fonts in use
 		["@nuxtjs/google-fonts", { families: { Inter: "100..900" } }],
 	],
 
