@@ -57,17 +57,21 @@
 								v-if="isStockVisible"
 								:class="$style.stockWarning"
 							>
-								<span>Only {{ stockQuantity }} left!</span>
+								<template v-if="stockQuantity > 0">
+									<span>Only {{ stockQuantity }} left!</span>
 
-								<!-- TODO: create underline button variant -->
-								<button
-									:class="$style.stockWarning__updateBtn"
-									class="underline cursor-pointer"
-									@click="() => updateItemQuantity(stockQuantity)"
-									v-if="stockQuantity !== item.quantity"
-								>
-									Update to {{ stockQuantity }}
-								</button>
+									<!-- TODO: create underline button variant -->
+									<button
+										:class="$style.stockWarning__updateBtn"
+										class="underline cursor-pointer"
+										@click="() => updateItemQuantity(stockQuantity)"
+										v-if="stockQuantity !== item.quantity"
+									>
+										Update to {{ stockQuantity }}
+									</button>
+								</template>
+
+								<span v-else>Out of stock</span>
 							</div>
 						</Transition>
 					</div>

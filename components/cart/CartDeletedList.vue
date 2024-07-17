@@ -1,10 +1,9 @@
 <template>
-	<ul :class="$style.root">
+	<ul class="space-y-2">
 		<CartDeletedListItem
 			v-for="item in items"
 			:item="item"
 			:key="item.productId"
-			:class="$style.item"
 		/>
 	</ul>
 </template>
@@ -16,9 +15,3 @@ defineProps<{
 	items: Cart["items"];
 }>();
 </script>
-
-<style module>
-.root > * + * {
-	margin-top: theme("spacing.4");
-}
-</style>

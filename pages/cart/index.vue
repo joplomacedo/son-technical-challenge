@@ -17,9 +17,7 @@
 				<div :class="$style.cart__main">
 					<div class="grid gap-8">
 						<div>
-							<div class="mb-4 flex justify-between items-center">
-								<p class="text-xl font-bold">Shopping Cart</p>
-							</div>
+							<p class="text-xl font-bold mb-4">Shopping Cart</p>
 
 							<div
 								v-if="cartStatus === 'pending'"
