@@ -15,16 +15,18 @@
 			<slot />
 		</div>
 
-		<div
-			:class="$style.spinnerWrapper"
-			v-if="loading"
-		>
-			<BaseSpinner
-				:class="$style.spinner"
-				size="sm"
-				color="white"
-			/>
-		</div>
+		<Transition name="scale-up">
+			<div
+				:class="$style.spinnerWrapper"
+				v-if="loading"
+			>
+				<BaseSpinner
+					:class="$style.spinner"
+					size="sm"
+					color="white"
+				/>
+			</div>
+		</Transition>
 	</component>
 </template>
 
@@ -48,6 +50,7 @@ withDefaults(
 </script>
 
 <style module>
+/* TODO: different shapes should have same heights if same size */
 /* Default State */
 .root {
 	position: relative;
@@ -58,6 +61,7 @@ withDefaults(
 	align-items: center;
 	justify-content: center;
 	font-weight: theme("fontWeight.semibold");
+	flex-shrink: 0;
 
 	&[disabled] {
 		cursor: not-allowed;
@@ -167,18 +171,18 @@ withDefaults(
 }
 
 .root[data-variant-shape="circle"][data-variant-size="xs"] {
-	--size: theme("spacing.4");
-}
-
-.root[data-variant-shape="circle"][data-variant-size="sm"] {
 	--size: theme("spacing.6");
 }
 
-.root[data-variant-shape="circle"][data-variant-size="md"] {
+.root[data-variant-shape="circle"][data-variant-size="sm"] {
 	--size: theme("spacing.8");
 }
 
 .root[data-variant-shape="circle"][data-variant-size="md"] {
 	--size: theme("spacing.10");
+}
+
+.root[data-variant-shape="circle"][data-variant-size="md"] {
+	--size: theme("spacing.12");
 }
 </style>

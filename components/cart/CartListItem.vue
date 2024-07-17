@@ -1,5 +1,5 @@
 <template>
-	<li :class="[$style.root, {}]">
+	<li :class="$style.root">
 		<div :class="$style.main">
 			<NuxtImg
 				:class="$style.image"
@@ -11,7 +11,7 @@
 				:placeholder-class="$style['is-placeholder']"
 				fit="cover"
 			/>
-			<div class="flex-grow flex flex-col justify-between">
+			<div class="flex-grow flex flex-col justify-between py-2">
 				<div class="flex justify-between items-start">
 					<div>
 						<p :class="$style.name">{{ item.product.name }}</p>
@@ -21,7 +21,7 @@
 					<p :class="$style.priceTotal">{{ $formatPrice(item.total) }}</p>
 				</div>
 
-				<div class="flex justify-between">
+				<div class="flex justify-between gap-2">
 					<div class="flex gap-4 items-center">
 						<div :class="$style.stepper">
 							<BaseButton
@@ -33,7 +33,7 @@
 							>
 								<BaseIcon name="Minus" />
 							</BaseButton>
-							<div :class="[$style.stepper__value]">
+							<div :class="$style.stepper__value">
 								{{ displayQuantity }}
 							</div>
 							<BaseButton
@@ -59,12 +59,15 @@
 							>
 								<span>Only {{ stockQuantity }} left!</span>
 
-								<span
+								<!-- TODO: create underline button variant -->
+								<button
+									:class="$style.stockWarning__updateBtn"
 									class="underline cursor-pointer"
 									@click="() => updateItemQuantity(stockQuantity)"
 									v-if="stockQuantity !== item.quantity"
-									>Update to {{ stockQuantity }}</span
 								>
+									Update to {{ stockQuantity }}
+								</button>
 							</div>
 						</Transition>
 					</div>
@@ -73,6 +76,7 @@
 						:disabled="isCartBusy"
 						size="xs"
 						shape="circle"
+						color="secondary"
 						@click="deleteItem"
 					>
 						<BaseIcon name="Trash" />
@@ -134,10 +138,6 @@ const isCartQuantityValid = computed(() => {
 	return stockQuantity.value >= props.item.quantity;
 });
 
-const isDisplayQuantityValid = computed(() => {
-	return stockQuantity.value >= displayQuantity.value;
-});
-
 const isStockVisible = computed(() => {
 	return (
 		!isCartQuantityValid.value ||
@@ -193,10 +193,6 @@ useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 </script>
 
 <style module>
-.root {
-	--size-img: v-bind(imgSizeWithUnit);
-}
-
 .main {
 	display: flex;
 	gap: theme("spacing.4");
@@ -210,19 +206,16 @@ useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 	display: flex;
 	align-items: center;
 }
-.stepper__btn {
-}
+
+/* TODO: current solution can break if more than 2 digits */
 .stepper__value {
 	width: 2.2em;
 	text-align: center;
-}
-
-.stepper.is-invalid {
-	.stepper__value {
-	}
+	font-variant-numeric: tabular-nums;
 }
 
 .image {
+	--size-img: v-bind(imgSizeWithUnit);
 	width: var(--size-img);
 	height: var(--size-img);
 	border-radius: theme("borderRadius.md");
@@ -256,9 +249,24 @@ useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 	display: flex;
 	gap: theme("spacing.2");
 	font-size: theme("fontSize.xs");
-	background-color: theme("colors.yellow.100");
-	color: theme("colors.yellow.800");
+	background-color: theme("colors.warning.100");
+	color: theme("colors.warning.800");
 	padding: theme("spacing.1") theme("spacing.2");
 	border-radius: theme("borderRadius.md");
+}
+
+.stockWarning__updateBtn {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+@media screen and (max-width: 640px) {
+	.image {
+		--size-img: 75px;
+	}
+
+	.stockWarning__updateBtn {
+		display: none;
+	}
 }
 </style>

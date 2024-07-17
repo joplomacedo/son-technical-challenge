@@ -31,6 +31,6 @@ const component = computed(() => componentResolvers[props.name]());
 .root {
 	display: inline-block;
 	width: 1lh;
-	height: 1lh;
+	aspect-ratio: 1;
 }
 </style>

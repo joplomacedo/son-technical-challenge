@@ -15,6 +15,7 @@ export default <Partial<Config>>{
 			colors: {
 				primary: colors.indigo,
 				error: colors.red,
+				warning: colors.yellow,
 			},
 			fontSize: {
 				xs: "clamp(0.6076rem, 0.5964rem + 0.0563vw, 0.64rem)",
