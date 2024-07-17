@@ -9,6 +9,7 @@ import {
 	minValue,
 	null as vNull,
 	union,
+	boolean,
 } from "valibot";
 
 const bodySchema = object({
@@ -18,17 +19,25 @@ const bodySchema = object({
 		quantity: pipe(number(), minValue(1)),
 	}),
 	currency: optional(union([string(), vNull()])),
+	safe: optional(boolean()),
 });
 
 export default defineEventHandler(async (event) => {
-	const { id, item, currency } = await readValidatedBody(event, (data) =>
-		parse(bodySchema, data)
-	);
+	const {
+		id,
+		item,
+		currency,
+		safe = false,
+	} = await readValidatedBody(event, (data) => parse(bodySchema, data));
 
 	try {
-		const cart = addCartItem(id, {
-			item,
-		});
+		const cart = addCartItem(
+			id,
+			{
+				item,
+			},
+			safe
+		);
 
 		return cartToDTO({
 			cart,

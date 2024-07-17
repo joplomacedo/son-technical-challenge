@@ -112,7 +112,13 @@ function useAddItemMutation(productId: string) {
 
 	return useMutation({
 		mutationKey: [user.value.id, "cart", "items", productId, "add"],
-		mutationFn: (quantity: number) =>
+		mutationFn: ({
+			quantity,
+			safe = false,
+		}: {
+			quantity: number;
+			safe?: boolean;
+		}) =>
 			$fetch("/api/carts/items/add", {
 				method: "post",
 				body: {
@@ -122,6 +128,7 @@ function useAddItemMutation(productId: string) {
 						productId,
 						quantity,
 					},
+					safe,
 				},
 			}),
 

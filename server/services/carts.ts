@@ -134,16 +134,24 @@ type AddCartItemPayload = {
 
 function addCartItem(
 	cartId: RepoId,
-	{ item: { productId, quantity } }: AddCartItemPayload
+	{ item: { productId, quantity } }: AddCartItemPayload,
+	safe: boolean = false
 ): RepoCart {
 	const cart = cartsRepo.get(cartId);
 	const product = getProduct(productId);
 
-	if (product.stockQuantity < quantity) {
-		throw new UnprocessableError("Requested quantity exceeds stock quantity", {
-			stockQuantity: product.stockQuantity,
-			requestedQuantity: quantity,
-		});
+	if (!safe) {
+		if (product.stockQuantity < quantity) {
+			throw new UnprocessableError(
+				"Requested quantity exceeds stock quantity",
+				{
+					stockQuantity: product.stockQuantity,
+					requestedQuantity: quantity,
+				}
+			);
+		}
+	} else {
+		quantity = Math.min(product.stockQuantity, quantity);
 	}
 
 	const newDbCartItem = {
