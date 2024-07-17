@@ -4,6 +4,13 @@
 			<div :class="$style.priceItem">
 				<p>Subtotal</p>
 				<p :class="$style.priceItem__value">
+					<Transition name="scale">
+						<BaseSpinner
+							v-if="isCartBusy"
+							size="sm"
+						/>
+					</Transition>
+
 					{{ $formatPrice(cart?.subtotal) }}
 				</p>
 			</div>
@@ -23,19 +30,6 @@
 					{{ $formatPrice(cartTotal) }}
 				</p>
 			</div>
-		</div>
-
-		<div :class="$style.spinnerRow">
-			<BaseSpinner
-				:class="'invisible'"
-				size="sm"
-			/>
-			<Transition name="scale">
-				<BaseSpinner
-					v-if="isCartBusy"
-					size="sm"
-				/>
-			</Transition>
 		</div>
 	</div>
 </template>
@@ -63,12 +57,6 @@ const cartTotal = computed(() => {
 </script>
 
 <style module>
-.spinnerRow {
-	display: flex;
-	justify-content: flex-end;
-	margin-top: theme("spacing.4");
-}
-
 .priceItems > * + * {
 	margin-top: theme("spacing.1");
 }
