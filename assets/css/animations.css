@@ -8,13 +8,24 @@
 	transform: scale(0.9);
 }
 
-.descend-enter-active,
-.descend-leave-active {
+.slide-down-enter-active,
+.slide-down-leave-active {
 	transition: 0.3s;
 }
 
-.descend-enter-from,
-.descend-leave-to {
+.slide-down-enter-from,
+.slide-down-leave-to {
 	opacity: 0;
 	transform: translateY(-10%);
+}
+
+.slide-left-enter-active,
+.slide-left-leave-active {
+	transition: 0.3s;
+}
+
+.slide-left-enter-from,
+.slide-left-leave-to {
+	opacity: 0;
+	transform: translateX(10%);
 }

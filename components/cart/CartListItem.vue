@@ -11,54 +11,68 @@
 				:placeholder-class="$style['is-placeholder']"
 				fit="cover"
 			/>
-			<div>
-				<p :class="$style.name">{{ item.product.name }}</p>
-				<p :class="$style.price">{{ $formatPrice(item.product.price) }}</p>
-
-				<div
-					:class="[
-						$style.stepper,
-						{
-							[$style['is-invalid']]: !isDisplayQuantityValid,
-						},
-					]"
-				>
-					<BaseButton
-						:class="$style.stepper__btn"
-						@click="handleQuantityInc(-1)"
-						:disabled="isCartBusy || displayQuantity < 1"
-					>
-						<BaseIcon name="Minus" />
-					</BaseButton>
-					<div :class="[$style.stepper__value]">
-						{{ displayQuantity }}
+			<div class="flex-grow">
+				<div class="flex justify-between items-start">
+					<div>
+						<p :class="$style.name">{{ item.product.name }}</p>
+						<p :class="$style.price">{{ $formatPrice(item.product.price) }}</p>
 					</div>
+
 					<BaseButton
-						:class="$style.stepper__btn"
-						@click="handleQuantityInc(1)"
 						:disabled="isCartBusy"
+						size="sm"
+						@click="deleteItem"
 					>
-						<BaseIcon name="Plus" />
+						<BaseIcon name="Trash" />
 					</BaseButton>
 				</div>
 
-				<div v-if="isStockVisible">
-					<div>Only {{ stockQuantity }} left</div>
-					<div v-if="stockQuantity !== item.quantity">
-						<span @click="() => updateItemQuantity(stockQuantity)"
-							>Update to {{ stockQuantity }}</span
+				<div class="flex gap-4 items-center">
+					<div
+						:class="[
+							$style.stepper,
+							{
+								[$style['is-invalid']]: !isDisplayQuantityValid,
+							},
+						]"
+					>
+						<BaseButton
+							:class="$style.stepper__btn"
+							size="sm"
+							@click="handleQuantityInc(-1)"
+							:disabled="isCartBusy || displayQuantity < 1"
 						>
+							<BaseIcon name="Minus" />
+						</BaseButton>
+						<div :class="[$style.stepper__value]">
+							{{ displayQuantity }}
+						</div>
+						<BaseButton
+							:class="$style.stepper__btn"
+							size="sm"
+							@click="handleQuantityInc(1)"
+							:disabled="isCartBusy"
+						>
+							<BaseIcon name="Plus" />
+						</BaseButton>
 					</div>
+
+					<BaseSpinner v-if="isItemMutating" />
+
+					<Transition name="slide-left">
+						<div
+							v-if="isStockVisible"
+							:class="$style.stockWarning"
+						>
+							<div>Only {{ stockQuantity }} left</div>
+							<div v-if="stockQuantity !== item.quantity">
+								<span @click="() => updateItemQuantity(stockQuantity)"
+									>Update to {{ stockQuantity }}</span
+								>
+							</div>
+						</div>
+					</Transition>
 				</div>
-
-				<BaseButton
-					:disabled="isCartBusy"
-					@click="deleteItem"
-				>
-					<BaseIcon name="Trash" />
-				</BaseButton>
-
-				<BaseSpinner v-if="isItemMutating" />
 
 				<p>{{ $formatPrice(item.total) }}</p>
 			</div>
@@ -227,83 +241,10 @@ useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 	font-weight: theme("fontWeight.semibold");
 }
 
-.quantityAndActions {
+.stockWarning {
 	display: flex;
-	align-items: center;
-	gap: theme("spacing.6");
-}
-
-.requestedChanges {
-	display: flex;
-	align-items: center;
-	gap: theme("spacing.2");
-	background: theme("colors.primary.50");
-	padding: 0 theme("spacing.2");
-	border-radius: theme("borderRadius.md");
-	font-size: theme("fontSize.sm");
-}
-
-.actions {
-	gap: theme("spacing.3");
-	display: flex;
-	align-items: center;
-}
-.quantityActions {
-	display: flex;
-	align-items: center;
+	flex-direction: column;
 	gap: theme("spacing.1");
-}
-
-.invalidQuantityWarning {
-	--background-color: theme("colors.yellow.100");
-	position: relative;
-	background-color: var(--background-color);
-	color: theme("colors.yellow.800");
-	padding: theme("spacing.2") theme("spacing.4");
-	border-radius: 0 0 theme("borderRadius.md") theme("borderRadius.md");
 	font-size: theme("fontSize.sm");
-	display: flex;
-	align-items: flex-start;
-
-	gap: theme("spacing.1");
-
-	&:after {
-		content: "";
-		display: block;
-		border: 5px solid transparent;
-		border-bottom-color: var(--background-color);
-		position: absolute;
-		bottom: 100%;
-		left: calc(var(--size-img) / 2);
-		transform: translateX(-50%);
-	}
-}
-
-.invalidQuantityWarning__icon {
-	margin-top: 4px;
-}
-.invalidQuantityWarning__content {
-	flex-grow: 1;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-}
-
-.invalidQuantityWarning__actions {
-	display: flex;
-	gap: theme("spacing.3");
-	flex-wrap: wrap;
-}
-
-.invalidQuantityWarning__actionBtn {
-	cursor: pointer;
-	text-decoration: underline;
-}
-
-.root.is-invalidQuantityWarningVisible {
-	.main {
-		background-color: theme("colors.gray.50");
-		padding: theme("spacing.4");
-	}
 }
 </style>
