@@ -9,9 +9,12 @@
 
 		<div v-if="isPageError"></div>
 
-		<div v-else>
-			<div class="grid lg:grid-cols-[1fr_360px] gap-x-24 gap-y-12 items-start">
-				<div>
+		<div
+			v-else
+			:class="$style.cart"
+		>
+			<div :class="$style.cart__grid">
+				<div :class="$style.cart__main">
 					<div class="grid gap-8">
 						<div>
 							<div class="mb-4 flex justify-between items-center">
@@ -89,7 +92,7 @@
 				</div>
 
 				<div
-					class="grid gap-5"
+					:class="$style.cart__sideBar"
 					v-if="cart?.items.length"
 				>
 					<CartPriceDetails />
@@ -191,4 +194,37 @@ const isPageError = computed(() =>
 );
 </script>
 
-<style module></style>
+<style module>
+.cart {
+}
+.cart__grid {
+	display: grid;
+	row-gap: theme("spacing.12");
+}
+.cart__main {
+}
+.cart__sideBar {
+	position: sticky;
+	bottom: 0;
+	padding-block: theme("spacing.6");
+	background-color: rgba(255, 255, 255, 0.9);
+	backdrop-filter: blur(5px);
+	border-top: 1px solid theme("colors.gray.200");
+}
+
+@media screen(lg) {
+	.cart__grid {
+		grid-template-columns: 1fr 360px;
+		column-gap: theme("spacing.24");
+		align-items: start;
+	}
+
+	.cart__sideBar {
+		position: static;
+		padding-block: 0;
+		background-color: transparent;
+		backdrop-filter: none;
+		border-top: none;
+	}
+}
+</style>
