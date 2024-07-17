@@ -35,7 +35,7 @@ function useUpdateItemMutation(productId: string) {
 			}),
 
 		onMutate() {
-			//queryClient.cancelQueries({ queryKey: [user.value.id, "cart"] });
+			queryClient.cancelQueries({ queryKey: [user.value.id, "cart"] });
 		},
 
 		onError({ data: error }: any) {
@@ -87,7 +87,7 @@ function useDeleteItemMutation(productId: string) {
 			});
 		},
 		onMutate() {
-			//queryClient.cancelQueries({ queryKey: [user.value.id, "cart"] });
+			queryClient.cancelQueries({ queryKey: [user.value.id, "cart"] });
 		},
 
 		onSuccess: (cart) => {
@@ -118,7 +118,7 @@ function useAddItemMutation(productId: string) {
 			}),
 
 		onMutate() {
-			//queryClient.cancelQueries({ queryKey: [user.value.id, "cart"] });
+			queryClient.cancelQueries({ queryKey: [user.value.id, "cart"] });
 		},
 
 		onSuccess: (cart) => {
