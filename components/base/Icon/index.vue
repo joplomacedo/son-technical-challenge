@@ -30,7 +30,7 @@ const component = computed(() => componentResolvers[props.name]());
 <style module>
 .root {
 	display: inline-block;
-	width: 1em;
-	height: 1em;
+	width: 1lh;
+	height: 1lh;
 }
 </style>

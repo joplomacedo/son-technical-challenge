@@ -11,70 +11,73 @@
 				:placeholder-class="$style['is-placeholder']"
 				fit="cover"
 			/>
-			<div class="flex-grow">
+			<div class="flex-grow flex flex-col justify-between">
 				<div class="flex justify-between items-start">
 					<div>
 						<p :class="$style.name">{{ item.product.name }}</p>
 						<p :class="$style.price">{{ $formatPrice(item.product.price) }}</p>
 					</div>
 
+					<p :class="$style.priceTotal">{{ $formatPrice(item.total) }}</p>
+				</div>
+
+				<div class="flex justify-between">
+					<div class="flex gap-4 items-center">
+						<div :class="$style.stepper">
+							<BaseButton
+								:class="$style.stepper__btn"
+								size="xs"
+								shape="circle"
+								@click="handleQuantityInc(-1)"
+								:disabled="isCartBusy || displayQuantity < 1"
+							>
+								<BaseIcon name="Minus" />
+							</BaseButton>
+							<div :class="[$style.stepper__value]">
+								{{ displayQuantity }}
+							</div>
+							<BaseButton
+								:class="$style.stepper__btn"
+								size="xs"
+								shape="circle"
+								@click="handleQuantityInc(1)"
+								:disabled="isCartBusy"
+							>
+								<BaseIcon name="Plus" />
+							</BaseButton>
+						</div>
+
+						<BaseSpinner
+							size="sm"
+							v-if="isItemMutating"
+						/>
+
+						<Transition name="slide-left">
+							<div
+								v-if="isStockVisible"
+								:class="$style.stockWarning"
+							>
+								<span>Only {{ stockQuantity }} left!</span>
+
+								<span
+									class="underline cursor-pointer"
+									@click="() => updateItemQuantity(stockQuantity)"
+									v-if="stockQuantity !== item.quantity"
+									>Update to {{ stockQuantity }}</span
+								>
+							</div>
+						</Transition>
+					</div>
+
 					<BaseButton
 						:disabled="isCartBusy"
-						size="sm"
+						size="xs"
+						shape="circle"
 						@click="deleteItem"
 					>
 						<BaseIcon name="Trash" />
 					</BaseButton>
 				</div>
-
-				<div class="flex gap-4 items-center">
-					<div
-						:class="[
-							$style.stepper,
-							{
-								[$style['is-invalid']]: !isDisplayQuantityValid,
-							},
-						]"
-					>
-						<BaseButton
-							:class="$style.stepper__btn"
-							size="sm"
-							@click="handleQuantityInc(-1)"
-							:disabled="isCartBusy || displayQuantity < 1"
-						>
-							<BaseIcon name="Minus" />
-						</BaseButton>
-						<div :class="[$style.stepper__value]">
-							{{ displayQuantity }}
-						</div>
-						<BaseButton
-							:class="$style.stepper__btn"
-							size="sm"
-							@click="handleQuantityInc(1)"
-							:disabled="isCartBusy"
-						>
-							<BaseIcon name="Plus" />
-						</BaseButton>
-					</div>
-
-					<BaseSpinner v-if="isItemMutating" />
-
-					<Transition name="slide-left">
-						<div
-							v-if="isStockVisible"
-							:class="$style.stockWarning"
-						>
-							<div>Only {{ stockQuantity }} left</div>
-							<div v-if="stockQuantity !== item.quantity">
-								<span @click="() => updateItemQuantity(stockQuantity)"
-									>Update to {{ stockQuantity }}</span
-								>
-							</div>
-						</div>
-					</Transition>
-				</div>
-
-				<p>{{ $formatPrice(item.total) }}</p>
 			</div>
 		</div>
 	</li>
@@ -241,10 +244,21 @@ useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
 	font-weight: theme("fontWeight.semibold");
 }
 
+.price {
+	color: theme("colors.gray.500");
+}
+
+.priceTotal {
+	font-weight: theme("fontWeight.semibold");
+}
+
 .stockWarning {
 	display: flex;
-	flex-direction: column;
-	gap: theme("spacing.1");
-	font-size: theme("fontSize.sm");
+	gap: theme("spacing.2");
+	font-size: theme("fontSize.xs");
+	background-color: theme("colors.yellow.100");
+	color: theme("colors.yellow.800");
+	padding: theme("spacing.1") theme("spacing.2");
+	border-radius: theme("borderRadius.md");
 }
 </style>
