@@ -5,12 +5,6 @@ export default function useCartIsCheckoutEnabled() {
 	const { selectedShippingMethodId } = useCartSelectedShippingMethod();
 	const { isCartBusy } = useCartIsBusy();
 
-	const isItemsQuantityValid = computed(() => {
-		return cart.value?.items.every(
-			(item) => item.quantity <= item.product.stockQuantity
-		);
-	});
-
 	const isCheckoutEnabled = computed(() => {
 		if (!cart.value) {
 			return {
@@ -40,7 +34,11 @@ export default function useCartIsCheckoutEnabled() {
 			};
 		}
 
-		if (!isItemsQuantityValid.value) {
+		const isItemsQuantityValid = cart.value?.items.every(
+			(item) => item.quantity <= item.product.stockQuantity
+		);
+
+		if (!isItemsQuantityValid) {
 			return {
 				enabled: false,
 				reason: "Cart contains items with invalid quantity",

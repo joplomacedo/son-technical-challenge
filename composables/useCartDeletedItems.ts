@@ -35,6 +35,10 @@ export default function useCartDeletedItems() {
 		deletedItems.value = newDeletedItems;
 	});
 
+	onUnmounted(() => {
+		deletedItems.value = [];
+	});
+
 	return {
 		deletedItems,
 	};

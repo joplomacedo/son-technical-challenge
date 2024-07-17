@@ -1,8 +1,9 @@
 function useCartQuery() {
 	const user = useUser();
+	const cartQueryKey = [user.value.id, "cart"];
 
 	return useQuery({
-		queryKey: [user.value.id, "cart"],
+		queryKey: cartQueryKey,
 		queryFn: () => {
 			return $fetch(`/api/carts/get`, {
 				method: "post",
@@ -73,7 +74,7 @@ function useDeleteItemMutation(productId: string) {
 	const user = useUser();
 
 	return useMutation({
-		mutationKey: [user.value.id, "cart", "items", productId, "delete-item"],
+		mutationKey: [user.value.id, "cart", "items", productId, "delete"],
 		mutationFn: () => {
 			return $fetch("/api/carts/items/delete", {
 				method: "post",
