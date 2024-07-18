@@ -15,7 +15,7 @@
 		>
 			<div :class="$style.cart__grid">
 				<div :class="$style.cart__main">
-					<div class="grid gap-8">
+					<div class="space-y-8">
 						<div>
 							<p class="text-xl font-bold mb-4">Shopping Cart</p>
 
@@ -33,14 +33,14 @@
 
 							<div
 								v-else-if="cartStatus === 'success'"
-								class="grid gap-8"
+								class="space-y-8"
 							>
 								<CartList
 									v-if="cart?.items.length"
 									:items="cart!.items"
 								/>
 
-								<CartEmpty v-if="!cart?.items.length" />
+								<CartEmptyCallToAction v-if="!cart?.items.length" />
 
 								<div v-if="deletedItems.length">
 									<div class="mb-4">
