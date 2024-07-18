@@ -93,7 +93,7 @@
 					:class="$style.cart__sideBar"
 					v-if="cart?.items.length"
 				>
-					<CartPriceDetails />
+					<CartPriceDetails class="mb-6" />
 
 					<BaseButton
 						class="block w-full"
