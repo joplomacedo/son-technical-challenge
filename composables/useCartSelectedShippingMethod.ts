@@ -1,7 +1,7 @@
 import { useCartQuery } from "~/queries/cart";
 import { useShippingMethodsQuery } from "~/queries/shipping-methods";
 
-export default function () {
+export default createSharedComposable(() => {
 	const { data: cart } = useCartQuery();
 	const { data: shippingMethods } = useShippingMethodsQuery();
 
@@ -39,4 +39,4 @@ export default function () {
 		selectedShippingMethodId,
 		selectedShippingMethod,
 	};
-}
+});

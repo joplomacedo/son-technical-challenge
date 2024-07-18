@@ -1,4 +1,4 @@
-export default function useUser() {
+export default createSharedComposable(function () {
 	const user = useState<{
 		id: string;
 		currency: string;
@@ -12,4 +12,4 @@ export default function useUser() {
 	}));
 
 	return user;
-}
+});

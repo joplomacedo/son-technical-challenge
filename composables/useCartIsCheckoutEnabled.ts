@@ -1,6 +1,6 @@
 import { useCartQuery } from "~/queries/cart";
 
-export default function useCartIsCheckoutEnabled() {
+export default createSharedComposable(function () {
 	const { data: cart } = useCartQuery();
 	const { selectedShippingMethodId } = useCartSelectedShippingMethod();
 	const { isCartBusy } = useCartIsBusy();
@@ -51,4 +51,4 @@ export default function useCartIsCheckoutEnabled() {
 	});
 
 	return { isCheckoutEnabled };
-}
+});

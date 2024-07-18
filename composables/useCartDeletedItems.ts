@@ -1,7 +1,7 @@
 import type { CartItem } from "~/queries/cart";
 import { useCartQuery } from "~/queries/cart";
 
-export default function useCartDeletedItems() {
+export default createSharedComposable(function () {
 	const { data: cart } = useCartQuery();
 	const deletedItems = useState<CartItem[]>("cart-deleted-items", () => []);
 
@@ -39,7 +39,14 @@ export default function useCartDeletedItems() {
 		deletedItems.value = [];
 	});
 
+	watch(
+		() => cart.value?.id,
+		() => {
+			deletedItems.value = [];
+		}
+	);
+
 	return {
 		deletedItems,
 	};
-}
+});

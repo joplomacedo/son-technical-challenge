@@ -1,7 +1,6 @@
 import { useCartQuery, useCartQueryKeys } from "~/queries/cart";
 
-export default function useCart() {
-	const user = useUser();
+export default createSharedComposable(function () {
 	const cartQuery = useCartQuery();
 	const cartQueryKeys = useCartQueryKeys();
 
@@ -18,4 +17,4 @@ export default function useCart() {
 	return {
 		isCartBusy,
 	};
-}
+});
