@@ -20,13 +20,14 @@ function useCartQuery() {
 
 	return useQuery({
 		queryKey: [...cartBaseQueryKey],
-		queryFn: () => {
+		queryFn: ({ signal }) => {
 			return $fetch(`/api/carts/get`, {
 				method: "post",
 				body: {
 					id: user.value.id,
 					currency: user.value.currency,
 				},
+				signal,
 			});
 		},
 	});
@@ -53,6 +54,8 @@ function useUpdateItemMutation(productId: string) {
 			}),
 
 		onMutate() {
+			// TODO: what if cartBaseQueryKey has a different value
+			// than the one that was used to fetch the cart?
 			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
 		},
 
