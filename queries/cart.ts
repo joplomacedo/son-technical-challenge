@@ -54,12 +54,18 @@ function useUpdateItemMutation(productId: string) {
 			}),
 
 		onMutate() {
-			// TODO: what if cartBaseQueryKey has a different value
-			// than the one that was used to fetch the cart?
 			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
+
+			return {
+				cartBaseQueryKey,
+			};
 		},
 
-		onError({ data: error }: any) {
+		onError({ data: error }: any, variables, context) {
+			if (!context) return;
+
+			const { cartBaseQueryKey } = context;
+
 			if (
 				error.statusCode === statusCodes.useUpdateItemMutation.invalidQuantity
 			) {
@@ -98,8 +104,8 @@ function useDeleteItemMutation(productId: string) {
 
 	return useMutation({
 		mutationKey: [...cartBaseQueryKey, "items", productId, "delete"],
-		mutationFn: () => {
-			return $fetch("/api/carts/items/delete", {
+		mutationFn: () =>
+			$fetch("/api/carts/items/delete", {
 				method: "post",
 				body: {
 					id: user.value.id,
@@ -108,15 +114,17 @@ function useDeleteItemMutation(productId: string) {
 						productId,
 					},
 				},
-			});
-		},
+			}),
 		onMutate() {
 			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
+
+			return {
+				cartBaseQueryKey,
+			};
 		},
 
-		onSuccess: (cart) => {
+		onSuccess: (cart, variables, { cartBaseQueryKey }) => {
 			queryClient.setQueryData(cartBaseQueryKey, cart);
-			// queryClient.invalidateQueries({ queryKey: [user, "cart"] });
 		},
 	});
 }
@@ -149,12 +157,15 @@ function useAddItemMutation(productId: string) {
 			}),
 
 		onMutate() {
-			queryClient.cancelQueries({ queryKey: [user, "cart"] });
+			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
+
+			return {
+				cartBaseQueryKey,
+			};
 		},
 
-		onSuccess: (cart) => {
-			queryClient.setQueryData([user, "cart"], cart);
-			// queryClient.invalidateQueries({ queryKey: [user, "cart"] });
+		onSuccess: (cart, variables, { cartBaseQueryKey }) => {
+			queryClient.setQueryData(cartBaseQueryKey, cart);
 		},
 	});
 }
