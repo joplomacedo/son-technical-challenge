@@ -4,34 +4,9 @@ import {
 	OperationError,
 } from "@/server/operation-errors";
 
+import { AddManyResult } from "@/server/operation-results";
+
 type RepoId = string;
-
-type RepoUpdateManyResultItem = {
-	id: RepoId;
-} & (
-	| {
-			success: true;
-	  }
-	| {
-			success: false;
-			error: OperationError;
-	  }
-);
-
-type RepoUpdateManyResult = RepoUpdateManyResultItem[];
-
-type RepoAddManyResultItem =
-	| {
-			id: RepoId;
-			success: true;
-	  }
-	| {
-			success: false;
-			error: OperationError;
-	  };
-
-type RepoAddManyResult = RepoAddManyResultItem[];
-
 class Repository<
 	RepoItem extends {
 		id: RepoId;
@@ -100,9 +75,9 @@ class Repository<
 
 	addMany(items: (RepoItem | Omit<RepoItem, "id">)[]): {
 		items: RepoItem[];
-		results: RepoAddManyResult;
+		results: AddManyResult;
 	} {
-		let results: RepoAddManyResult = [];
+		let results: AddManyResult = [];
 		let repoItems: RepoItem[] = [];
 
 		items.forEach((item) => {
@@ -175,10 +150,4 @@ class Repository<
 export default <RepoItem extends { id: RepoId }>() =>
 	new Repository<RepoItem>();
 
-export type {
-	RepoId,
-	RepoUpdateManyResultItem,
-	RepoUpdateManyResult,
-	RepoAddManyResultItem,
-	RepoAddManyResult,
-};
+export type { RepoId };
