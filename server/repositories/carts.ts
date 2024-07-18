@@ -40,6 +40,24 @@ cartsRepo.addMany([
 			},
 		],
 	},
+	{
+		userId: "2",
+		id: "2",
+		items: [
+			{
+				productId: "2",
+				id: "2",
+				quantity: 5,
+				requestedQuantity: 5,
+			},
+			{
+				productId: "3",
+				id: "3",
+				quantity: 5,
+				requestedQuantity: 5,
+			},
+		],
+	},
 ]);
 
 export default cartsRepo;
