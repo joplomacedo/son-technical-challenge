@@ -4,38 +4,36 @@ const statusCodes = {
 	},
 } as const;
 
-//there must be a better way to do this
-// lock etc, etc etc
-function useCartBaseQueryKey() {
+const useCartQueryKeys = () => {
 	const user = useUser();
 	const userKeyUnit = computed(() => ({
 		id: user.value.id,
 		currency: user.value.currency,
 	}));
 
-	return [userKeyUnit, "cart"] as const;
-}
+	const queryKeys = {
+		cart: () => [userKeyUnit, "cart"],
+		updateItem: (productId: string) => [
+			...queryKeys.cart(),
+			productId,
+			"update",
+		],
+		deleteItem: (productId: string) => [
+			...queryKeys.cart(),
+			productId,
+			"delete",
+		],
+		addItem: (productId: string) => [...queryKeys.cart(), productId, "add"],
+	};
 
-function lockCartBaseQueryKey(
-	queryKey: ReturnType<typeof useCartBaseQueryKey>
-) {
-	const [userKeyUnit, cartKeyUnit] = queryKey;
-
-	return [
-		{
-			userId: userKeyUnit.value.id,
-			currency: userKeyUnit.value.currency,
-		},
-		cartKeyUnit,
-	];
-}
+	return queryKeys;
+};
 
 function useCartQuery() {
 	const user = useUser();
-	const cartBaseQueryKey = useCartBaseQueryKey();
 
 	return useQuery({
-		queryKey: [...cartBaseQueryKey],
+		queryKey: useCartQueryKeys().cart(),
 		queryFn: ({ signal }) => {
 			return $fetch(`/api/carts/get`, {
 				method: "post",
@@ -52,10 +50,12 @@ function useCartQuery() {
 function useUpdateItemMutation(productId: string) {
 	const queryClient = useQueryClient();
 	const user = useUser();
-	const cartBaseQueryKey = useCartBaseQueryKey();
+	const queryKeys = useCartQueryKeys();
+	const cartQueryKey = queryKeys.cart();
+	const updateItemQueryKey = queryKeys.updateItem(productId);
 
 	return useMutation({
-		mutationKey: [...cartBaseQueryKey, "items", productId, "update"],
+		mutationKey: updateItemQueryKey,
 		mutationFn: (quantity: number) =>
 			$fetch("/api/carts/items/update", {
 				method: "post",
@@ -70,22 +70,22 @@ function useUpdateItemMutation(productId: string) {
 			}),
 
 		onMutate() {
-			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
+			queryClient.cancelQueries({ queryKey: cartQueryKey });
 
 			return {
-				lockedCartBaseQueryKey: lockCartBaseQueryKey(cartBaseQueryKey),
+				lockedCartQueryKey: readonly(cartQueryKey),
 			};
 		},
 
 		onError({ data: error }: any, variables, context) {
 			if (!context) return;
 
-			const { lockedCartBaseQueryKey } = context;
+			const { lockedCartQueryKey } = context;
 
 			if (
 				error.statusCode === statusCodes.useUpdateItemMutation.invalidQuantity
 			) {
-				queryClient.setQueryData(lockedCartBaseQueryKey, (cart: Cart) => {
+				queryClient.setQueryData(lockedCartQueryKey, (cart: Cart) => {
 					return {
 						...cart,
 						items: cart.items.map((item) => {
@@ -106,19 +106,21 @@ function useUpdateItemMutation(productId: string) {
 			}
 		},
 
-		onSuccess: (cart) => {
-			queryClient.setQueryData(cartBaseQueryKey, cart);
+		onSuccess: (cart, variables, { lockedCartQueryKey }) => {
+			queryClient.setQueryData(lockedCartQueryKey, cart);
 		},
 	});
 }
 
 function useDeleteItemMutation(productId: string) {
-	const queryClient = useQueryClient();
-	const cartBaseQueryKey = useCartBaseQueryKey();
 	const user = useUser();
+	const queryClient = useQueryClient();
+	const queryKeys = useCartQueryKeys();
+	const cartQueryKey = queryKeys.cart();
+	const deleteItemQueryKey = queryKeys.deleteItem(productId);
 
 	return useMutation({
-		mutationKey: [...cartBaseQueryKey, "items", productId, "delete"],
+		mutationKey: deleteItemQueryKey,
 		mutationFn: () =>
 			$fetch("/api/carts/items/delete", {
 				method: "post",
@@ -131,26 +133,28 @@ function useDeleteItemMutation(productId: string) {
 				},
 			}),
 		onMutate() {
-			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
+			queryClient.cancelQueries({ queryKey: cartQueryKey });
 
 			return {
-				lockedCartBaseQueryKey: lockCartBaseQueryKey(cartBaseQueryKey),
+				lockedCartQueryKey: readonly(cartQueryKey),
 			};
 		},
 
-		onSuccess: (cart, variables, { lockedCartBaseQueryKey }) => {
-			queryClient.setQueryData(lockedCartBaseQueryKey, cart);
+		onSuccess: (cart, variables, { lockedCartQueryKey }) => {
+			queryClient.setQueryData(lockedCartQueryKey, cart);
 		},
 	});
 }
 
 function useAddItemMutation(productId: string) {
 	const queryClient = useQueryClient();
-	const cartBaseQueryKey = useCartBaseQueryKey();
 	const user = useUser();
+	const queryKeys = useCartQueryKeys();
+	const cartQueryKey = queryKeys.cart();
+	const addItemQueryKey = queryKeys.addItem(productId);
 
 	return useMutation({
-		mutationKey: [...cartBaseQueryKey, "items", productId, "add"],
+		mutationKey: addItemQueryKey,
 		mutationFn: ({
 			quantity,
 			safe = false,
@@ -172,15 +176,15 @@ function useAddItemMutation(productId: string) {
 			}),
 
 		onMutate() {
-			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
+			queryClient.cancelQueries({ queryKey: cartQueryKey });
 
 			return {
-				lockedCartBaseQueryKey: lockCartBaseQueryKey(cartBaseQueryKey),
+				lockedCartQueryKey: readonly(cartQueryKey),
 			};
 		},
 
-		onSuccess: (cart, variables, { lockedCartBaseQueryKey }) => {
-			queryClient.setQueryData(lockedCartBaseQueryKey, cart);
+		onSuccess: (cart, variables, { lockedCartQueryKey }) => {
+			queryClient.setQueryData(lockedCartQueryKey, cart);
 		},
 	});
 }
@@ -199,6 +203,7 @@ export {
 	useDeleteItemMutation,
 	useAddItemMutation,
 	statusCodes,
+	useCartQueryKeys,
 };
 
 export type {

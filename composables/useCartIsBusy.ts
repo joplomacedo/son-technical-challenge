@@ -1,13 +1,14 @@
-import { useCartQuery } from "~/queries/cart";
+import { useCartQuery, useCartQueryKeys } from "~/queries/cart";
 
 export default function useCart() {
-	const cartQuery = useCartQuery();
 	const user = useUser();
+	const cartQuery = useCartQuery();
+	const cartQueryKeys = useCartQueryKeys();
 
 	const { isRefetching: isRefetchingCart } = cartQuery;
 
 	const totalCartMutations = useIsMutating({
-		mutationKey: [user.value.id, "cart"],
+		mutationKey: cartQueryKeys.cart(),
 	});
 
 	const isCartBusy = computed(() => {
