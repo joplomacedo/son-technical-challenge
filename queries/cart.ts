@@ -4,6 +4,8 @@ const statusCodes = {
 	},
 } as const;
 
+//there must be a better way to do this
+// lock etc, etc etc
 function useCartBaseQueryKey() {
 	const user = useUser();
 	const userKeyUnit = computed(() => ({
@@ -12,6 +14,20 @@ function useCartBaseQueryKey() {
 	}));
 
 	return [userKeyUnit, "cart"] as const;
+}
+
+function lockCartBaseQueryKey(
+	queryKey: ReturnType<typeof useCartBaseQueryKey>
+) {
+	const [userKeyUnit, cartKeyUnit] = queryKey;
+
+	return [
+		{
+			userId: userKeyUnit.value.id,
+			currency: userKeyUnit.value.currency,
+		},
+		cartKeyUnit,
+	];
 }
 
 function useCartQuery() {
@@ -57,19 +73,19 @@ function useUpdateItemMutation(productId: string) {
 			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
 
 			return {
-				cartBaseQueryKey,
+				lockedCartBaseQueryKey: lockCartBaseQueryKey(cartBaseQueryKey),
 			};
 		},
 
 		onError({ data: error }: any, variables, context) {
 			if (!context) return;
 
-			const { cartBaseQueryKey } = context;
+			const { lockedCartBaseQueryKey } = context;
 
 			if (
 				error.statusCode === statusCodes.useUpdateItemMutation.invalidQuantity
 			) {
-				queryClient.setQueryData(cartBaseQueryKey, (cart: Cart) => {
+				queryClient.setQueryData(lockedCartBaseQueryKey, (cart: Cart) => {
 					return {
 						...cart,
 						items: cart.items.map((item) => {
@@ -92,7 +108,6 @@ function useUpdateItemMutation(productId: string) {
 
 		onSuccess: (cart) => {
 			queryClient.setQueryData(cartBaseQueryKey, cart);
-			// queryClient.invalidateQueries({ queryKey: [user, "cart"] });
 		},
 	});
 }
@@ -119,12 +134,12 @@ function useDeleteItemMutation(productId: string) {
 			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
 
 			return {
-				cartBaseQueryKey,
+				lockedCartBaseQueryKey: lockCartBaseQueryKey(cartBaseQueryKey),
 			};
 		},
 
-		onSuccess: (cart, variables, { cartBaseQueryKey }) => {
-			queryClient.setQueryData(cartBaseQueryKey, cart);
+		onSuccess: (cart, variables, { lockedCartBaseQueryKey }) => {
+			queryClient.setQueryData(lockedCartBaseQueryKey, cart);
 		},
 	});
 }
@@ -160,12 +175,12 @@ function useAddItemMutation(productId: string) {
 			queryClient.cancelQueries({ queryKey: cartBaseQueryKey });
 
 			return {
-				cartBaseQueryKey,
+				lockedCartBaseQueryKey: lockCartBaseQueryKey(cartBaseQueryKey),
 			};
 		},
 
-		onSuccess: (cart, variables, { cartBaseQueryKey }) => {
-			queryClient.setQueryData(cartBaseQueryKey, cart);
+		onSuccess: (cart, variables, { lockedCartBaseQueryKey }) => {
+			queryClient.setQueryData(lockedCartBaseQueryKey, cart);
 		},
 	});
 }
