@@ -179,14 +179,6 @@ function handlModalEmailFormClose() {
 
 const criticalComponents = [cartStatus, shippingMethodsStatus];
 
-const isPagePending = computed(() =>
-	criticalComponents.some((status) => status.value === "pending")
-);
-
-const isPageReady = computed(() =>
-	criticalComponents.every((status) => status.value === "success")
-);
-
 const isPageError = computed(() =>
 	criticalComponents.some((status) => status.value === "error")
 );

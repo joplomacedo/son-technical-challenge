@@ -2,6 +2,10 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 
+	imports: {
+		dirs: ["composables/**/use*.{ts,js}"],
+	},
+
 	modules: [
 		"@nuxtjs/tailwindcss",
 		"@nuxt/eslint",
