@@ -13,7 +13,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 				...args: Parameters<FormatPriceGlobal>
 			): ReturnType<FormatPriceGlobal> => {
 				const [price] = args;
-				const user = useUser();
+				const { user } = useUserStore();
 
 				if (isNil(price)) {
 					return "";

@@ -50,7 +50,7 @@
 <script setup lang="ts">
 /* TODO: figure best way to share code with CartListItem */
 import type { CartItem } from "@/queries/cart";
-import { useAddItemMutation } from "~/queries/cart";
+import { useAddItemMutation, useCartIsBusy } from "~/queries/cart";
 const props = defineProps<{
 	item: CartItem;
 }>();
@@ -62,7 +62,7 @@ const { mutate: addItem, status: addItemStatus } = useAddItemMutation(
 	props.item.id
 );
 
-const { isCartBusy } = useCartIsBusy();
+const isCartBusy = useCartIsBusy();
 
 const handleAddToCart = (quantity: number) => {
 	addItem({ quantity, safe: true });

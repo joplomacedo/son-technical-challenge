@@ -1,9 +1,7 @@
-import type { CartItem } from "~/queries/cart";
-import { useCartQuery } from "~/queries/cart";
+import type { Cart, CartItem } from "~/queries/cart";
 
-export default createSharedComposable(function () {
-	const { data: cart } = useCartQuery();
-	const deletedItems = useState<CartItem[]>("cart-deleted-items", () => []);
+export default function useDeletedItems(cart: Ref<Cart | undefined>) {
+	const deletedItems = ref<CartItem[]>([]);
 
 	watch(cart, (newCart, oldCart) => {
 		if (!newCart) return;
@@ -46,7 +44,5 @@ export default createSharedComposable(function () {
 		}
 	);
 
-	return {
-		deletedItems,
-	};
-});
+	return deletedItems;
+}

@@ -3,7 +3,7 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 
 	imports: {
-		dirs: ["composables/**/use*.{ts,js}"],
+		dirs: ["composables/**/use*.{ts,js}", "store/**/index.{ts,js}"],
 	},
 
 	modules: [
@@ -13,7 +13,7 @@ export default defineNuxtConfig({
 		"@nuxt/image",
 		"floating-vue/nuxt",
 		"@vueuse/nuxt",
-		//review fonts in use
+		//TODO: review fonts in use
 		["@nuxtjs/google-fonts", { families: { Inter: "100..900" } }],
 	],
 

@@ -27,7 +27,7 @@
 			<div :class="$style.priceItem">
 				<p>Total</p>
 				<p :class="$style.priceItem__value">
-					{{ $formatPrice(cartTotal) }}
+					{{ $formatPrice(total) }}
 				</p>
 			</div>
 		</div>
@@ -35,25 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { useCartQuery } from "~/queries/cart";
-import { useShippingMethodsQuery } from "~/queries/shipping-methods";
+import { useCartQuery, useCartIsBusy } from "~/queries/cart";
 
 const { data: cart } = useCartQuery();
-const { data: shippingMethods } = useShippingMethodsQuery();
-const { selectedShippingMethod } = useCartSelectedShippingMethod();
-const { isCartBusy } = useCartIsBusy();
-
-const cartTotal = computed(() => {
-	if (!cart.value || !shippingMethods.value) {
-		return null;
-	}
-
-	if (!selectedShippingMethod.value) {
-		return cart.value.subtotal;
-	}
-
-	return cart.value.subtotal + selectedShippingMethod.value.price;
-});
+const isCartBusy = useCartIsBusy();
+const { total, selectedShippingMethod } = useCartStore();
 </script>
 
 <style module>

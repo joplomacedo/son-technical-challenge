@@ -127,11 +127,9 @@ useSeoMeta({
 	//TODO: og and twitter
 });
 
-const user = useUser();
-
-const { selectedShippingMethodId } = useCartSelectedShippingMethod();
-const { isCheckoutEnabled } = useCartIsCheckoutEnabled();
-const { deletedItems } = useCartDeletedItems();
+const { user } = useUserStore();
+const { selectedShippingMethodId, isCheckoutEnabled, deletedItems } =
+	useCartStore();
 
 const { data: cart, status: cartStatus } = useCartQuery();
 
@@ -161,20 +159,24 @@ const handleCheckoutButtonClick = () => {
 		return;
 	}
 
-	alert("Move to checkout!");
-	setTimeout(() => {
-		window.location.reload();
-	}, 300);
+	moveToCheckout();
 };
 
 function handlModalEmailFormClose() {
 	if (user.value.email) {
-		alert("Move to checkout!");
+		moveToCheckout();
 	} else {
 		isCheckoutButtonLoading.value = false;
 	}
 
 	isEmailModalFormOpen.value = false;
+}
+
+function moveToCheckout() {
+	alert("Move to checkout!");
+	setTimeout(() => {
+		window.location.reload();
+	}, 300);
 }
 
 const criticalComponents = [cartStatus, shippingMethodsStatus];

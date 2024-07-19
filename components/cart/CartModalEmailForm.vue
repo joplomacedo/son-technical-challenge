@@ -71,7 +71,7 @@ const emit = defineEmits<{
 	close: [];
 }>();
 
-const user = useUser();
+const { user } = useUserStore();
 
 const handleFormSubmit = handleSubmit(
 	(values) => {

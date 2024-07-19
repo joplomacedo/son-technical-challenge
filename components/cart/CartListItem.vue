@@ -96,8 +96,10 @@ import type { CartItem } from "@/queries/cart";
 import {
 	useUpdateItemMutation,
 	useDeleteItemMutation,
+	useCartIsBusy,
 	statusCodes,
 } from "~/queries/cart";
+
 const props = defineProps<{
 	item: CartItem;
 }>();
@@ -117,7 +119,7 @@ const {
 	status: deleteItemStatus,
 } = useDeleteItemMutation(props.item.productId);
 
-const { isCartBusy } = useCartIsBusy();
+const isCartBusy = useCartIsBusy();
 
 const isItemMutating = computed(() => {
 	return [updateItemQuantityStatus, deleteItemStatus].some(

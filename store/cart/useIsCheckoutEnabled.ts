@@ -1,10 +1,14 @@
-import { useCartQuery } from "~/queries/cart";
+import type { Cart } from "~/queries/cart";
 
-export default createSharedComposable(function () {
-	const { data: cart } = useCartQuery();
-	const { selectedShippingMethodId } = useCartSelectedShippingMethod();
-	const { isCartBusy } = useCartIsBusy();
-
+export default function useIsCheckoutEnabled({
+	isCartBusy,
+	cart,
+	shippingMethodId,
+}: {
+	isCartBusy: Ref<boolean>;
+	cart: Ref<Cart | undefined>;
+	shippingMethodId: Ref<string | null>;
+}) {
 	const isCheckoutEnabled = computed(() => {
 		if (!cart.value) {
 			return {
@@ -13,14 +17,14 @@ export default createSharedComposable(function () {
 			};
 		}
 
-		if (cart.value.items.length === 0) {
+		if (!cart.value.items.length) {
 			return {
 				enabled: false,
 				reason: "Cart is empty",
 			};
 		}
 
-		if (isNil(selectedShippingMethodId.value)) {
+		if (isNil(shippingMethodId.value)) {
 			return {
 				enabled: false,
 				reason: "Shipping method is not selected",
@@ -50,5 +54,5 @@ export default createSharedComposable(function () {
 		};
 	});
 
-	return { isCheckoutEnabled };
-});
+	return isCheckoutEnabled;
+}

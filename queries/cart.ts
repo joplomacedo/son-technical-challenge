@@ -4,8 +4,21 @@ const statusCodes = {
 	},
 } as const;
 
+const useCartIsBusy = () => {
+	const cartQuery = useCartQuery();
+	const totalCartMutations = useIsMutating({
+		mutationKey: useCartQueryKeys().cart(),
+	});
+
+	const isCartBusy = computed(() => {
+		return cartQuery.isFetching.value || totalCartMutations.value > 0;
+	});
+
+	return isCartBusy;
+};
+
 const useCartQueryKeys = () => {
-	const user = useUser();
+	const { user } = useUserStore();
 	const userKeyUnit = computed(() => ({
 		id: user.value.id,
 		currency: user.value.currency,
@@ -30,7 +43,7 @@ const useCartQueryKeys = () => {
 };
 
 function useCartQuery() {
-	const user = useUser();
+	const { user } = useUserStore();
 
 	return useQuery({
 		queryKey: useCartQueryKeys().cart(),
@@ -49,7 +62,7 @@ function useCartQuery() {
 
 function useUpdateItemMutation(productId: string) {
 	const queryClient = useQueryClient();
-	const user = useUser();
+	const { user } = useUserStore();
 	const queryKeys = useCartQueryKeys();
 	const cartQueryKey = queryKeys.cart();
 	const updateItemQueryKey = queryKeys.updateItem(productId);
@@ -113,7 +126,7 @@ function useUpdateItemMutation(productId: string) {
 }
 
 function useDeleteItemMutation(productId: string) {
-	const user = useUser();
+	const { user } = useUserStore();
 	const queryClient = useQueryClient();
 	const queryKeys = useCartQueryKeys();
 	const cartQueryKey = queryKeys.cart();
@@ -148,7 +161,7 @@ function useDeleteItemMutation(productId: string) {
 
 function useAddItemMutation(productId: string) {
 	const queryClient = useQueryClient();
-	const user = useUser();
+	const { user } = useUserStore();
 	const queryKeys = useCartQueryKeys();
 	const cartQueryKey = queryKeys.cart();
 	const addItemQueryKey = queryKeys.addItem(productId);
@@ -204,6 +217,7 @@ export {
 	useAddItemMutation,
 	statusCodes,
 	useCartQueryKeys,
+	useCartIsBusy,
 };
 
 export type {
