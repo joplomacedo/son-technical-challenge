@@ -64,7 +64,7 @@
 									<button
 										:class="$style.stockWarning__updateBtn"
 										class="underline cursor-pointer"
-										@click="() => updateItemQuantity(stockQuantity)"
+										@click="() => updateItem(stockQuantity)"
 										v-if="stockQuantity !== item.quantity"
 									>
 										Update to {{ stockQuantity }}
@@ -97,7 +97,7 @@ import {
 	useUpdateItemMutation,
 	useDeleteItemMutation,
 	useCartIsBusy,
-	statusCodes,
+	STATUS_CODES,
 } from "~/queries/cart";
 
 const props = defineProps<{
@@ -108,9 +108,9 @@ const imgSize = 100;
 const imgSizeWithUnit = `${imgSize}px`;
 
 const {
-	error: updateItemQuantityError,
-	mutate: updateItemQuantityMutate,
-	status: updateItemQuantityStatus,
+	error: updateItemError,
+	mutate: updateItemMutate,
+	status: updateItemStatus,
 } = useUpdateItemMutation(props.item.productId);
 
 const {
@@ -122,7 +122,7 @@ const {
 const isCartBusy = useCartIsBusy();
 
 const isItemMutating = computed(() => {
-	return [updateItemQuantityStatus, deleteItemStatus].some(
+	return [updateItemStatus, deleteItemStatus].some(
 		(status) => status.value === "pending"
 	);
 });
@@ -147,17 +147,17 @@ const isCartQuantityValid = computed(() => {
 const isStockVisible = computed(() => {
 	return (
 		!isCartQuantityValid.value ||
-		updateItemQuantityError.value?.data.statusCode ===
-			statusCodes.useUpdateItemMutation.invalidQuantity
+		updateItemError.value?.data.statusCode ===
+			STATUS_CODES.useUpdateItemMutation.invalidQuantity
 	);
 });
 
-function updateItemQuantity(quantity: number) {
-	return updateItemQuantityMutate(quantity, {
+function updateItem(quantity: number) {
+	return updateItemMutate(quantity, {
 		onError(error) {
 			if (
 				error.data.statusCode ===
-				statusCodes.useUpdateItemMutation.invalidQuantity
+				STATUS_CODES.useUpdateItemMutation.invalidQuantity
 			) {
 				displayQuantity.value = props.item.quantity;
 			}
@@ -169,7 +169,7 @@ const debouncedUpdate = debounce((newQuantity) => {
 	if (newQuantity < 1) {
 		deleteItem();
 	} else {
-		updateItemQuantity(newQuantity);
+		updateItem(newQuantity);
 	}
 }, 800);
 

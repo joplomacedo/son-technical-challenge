@@ -1,4 +1,4 @@
-const statusCodes = {
+const STATUS_CODES = {
 	useUpdateItemMutation: {
 		invalidQuantity: 422,
 	},
@@ -96,7 +96,7 @@ function useUpdateItemMutation(productId: string) {
 			const { lockedCartQueryKey } = context;
 
 			if (
-				error.statusCode === statusCodes.useUpdateItemMutation.invalidQuantity
+				error.statusCode === STATUS_CODES.useUpdateItemMutation.invalidQuantity
 			) {
 				queryClient.setQueryData(lockedCartQueryKey, (cart: Cart) => {
 					return {
@@ -206,7 +206,7 @@ type CartQuery = ReturnType<typeof useCartQuery>;
 type Cart = Exclude<CartQuery["data"]["value"], undefined>;
 type CartItem = Cart["items"][number];
 
-type UpdateItemQuantityMutation = ReturnType<typeof useUpdateItemMutation>;
+type UpdateItemMutation = ReturnType<typeof useUpdateItemMutation>;
 type DeleteItemMutation = ReturnType<typeof useDeleteItemMutation>;
 type AddItemMutation = ReturnType<typeof useAddItemMutation>;
 
@@ -215,7 +215,7 @@ export {
 	useUpdateItemMutation,
 	useDeleteItemMutation,
 	useAddItemMutation,
-	statusCodes,
+	STATUS_CODES,
 	useCartQueryKeys,
 	useCartIsBusy,
 };
@@ -224,7 +224,7 @@ export type {
 	CartQuery,
 	Cart,
 	CartItem,
-	UpdateItemQuantityMutation,
+	UpdateItemMutation,
 	DeleteItemMutation,
 	AddItemMutation,
 };
