@@ -1,5 +1,5 @@
 <template>
-	<div :class="$style.spinner"></div>
+	<div :class="$style.spinner"/>
 </template>
 
 <script setup lang="ts">

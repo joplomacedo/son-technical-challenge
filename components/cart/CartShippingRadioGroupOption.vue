@@ -1,15 +1,15 @@
 <template>
 	<div
-		:class="[$style.root, { [$style['is-disabled']]: disabled }]"
 		v-tooltip="{
 			content: 'Cart does not qualify for this shipping method.',
 			disabled: !disabled,
 		}"
+		:class="[$style.root, { [$style['is-disabled']]: disabled }]"
 		@click="handleClick"
 	>
 		<BaseFormRadio
-			:value="option.id"
 			v-model="model"
+			:value="option.id"
 			:disabled="disabled"
 			@click.stop
 		/>

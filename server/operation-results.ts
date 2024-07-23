@@ -1,4 +1,4 @@
-import { OperationError } from "./operation-errors";
+import type { OperationError } from "./operation-errors";
 
 type UpdateManyResultItem = {
 	id: string;

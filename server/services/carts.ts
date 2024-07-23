@@ -13,7 +13,7 @@ import {
 	UnprocessableError,
 } from "@/server/operation-errors";
 
-import { UpdateManyResult } from "@/server/operation-results";
+import type { UpdateManyResult } from "@/server/operation-results";
 
 function getCart(cartId: RepoId): RepoCart {
 	return cartsRepo.get(cartId);
@@ -79,7 +79,7 @@ function updateManyCartItemQuantity(
 	{ items }: UpdateManyCartItemQuantityPayload
 ): { cart: RepoCart; updateResults: UpdateManyResult } {
 	let cart = cartsRepo.get(cartId);
-	let updateResults: UpdateManyResult = [];
+	const updateResults: UpdateManyResult = [];
 
 	for (const item of items) {
 		try {

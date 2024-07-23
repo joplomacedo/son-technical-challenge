@@ -28,16 +28,16 @@
 						</span>
 
 						<BaseSpinner
-							size="sm"
 							v-if="addItemStatus === 'pending'"
+							size="sm"
 						/>
 					</div>
 
 					<BaseButton
 						:class="$style.stepper__btn"
 						size="xs"
-						@click="() => handleAddToCart(item.quantity)"
 						:disabled="isCartBusy"
+						@click="() => handleAddToCart(item.quantity)"
 					>
 						Add to cart
 					</BaseButton>

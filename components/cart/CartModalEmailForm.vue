@@ -42,7 +42,6 @@ import {
 	pipe as vPipe,
 	string as vString,
 	email as vEmail,
-	nonEmpty as vNonEmpty,
 	object as vObject,
 	minLength as vMinLength,
 } from "valibot";

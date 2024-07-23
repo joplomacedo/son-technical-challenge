@@ -1,14 +1,14 @@
 <template>
 	<div :class="[$style.root, attrsClass]">
 		<input
-			:class="$style.input"
 			v-model="model"
+			:class="$style.input"
 			v-bind="attrsRest"
 			type="text"
-		/>
+		>
 		<Icon
-			:class="$style.icon"
 			v-if="icon"
+			:class="$style.icon"
 			:name="icon"
 		/>
 	</div>

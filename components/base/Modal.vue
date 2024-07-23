@@ -1,8 +1,8 @@
 <template>
 	<div
 		:class="$style.overlay"
-		@click="emit('close')"
 		:data-variant-width="props.width"
+		@click="emit('close')"
 	>
 		<div
 			:class="$style.modal"

@@ -1,7 +1,7 @@
 <template>
 	<component
-		:class="$style.root"
 		:is="component"
+		:class="$style.root"
 	/>
 </template>
 

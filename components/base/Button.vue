@@ -17,8 +17,8 @@
 
 		<Transition name="scale-up">
 			<div
-				:class="$style.spinnerWrapper"
 				v-if="loading"
+				:class="$style.spinnerWrapper"
 			>
 				<BaseSpinner
 					:class="$style.spinner"

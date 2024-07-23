@@ -4,7 +4,7 @@ import {
 	OperationError,
 } from "@/server/operation-errors";
 
-import { AddManyResult } from "@/server/operation-results";
+import type { AddManyResult } from "@/server/operation-results";
 
 type RepoId = string;
 class Repository<
@@ -77,8 +77,8 @@ class Repository<
 		items: RepoItem[];
 		results: AddManyResult;
 	} {
-		let results: AddManyResult = [];
-		let repoItems: RepoItem[] = [];
+		const results: AddManyResult = [];
+		const repoItems: RepoItem[] = [];
 
 		items.forEach((item) => {
 			try {

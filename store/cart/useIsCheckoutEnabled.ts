@@ -10,6 +10,8 @@ export default function useIsCheckoutEnabled({
 	shippingMethodId: Ref<string | null>;
 }) {
 	const isCheckoutEnabled = computed(() => {
+		debugger;
+
 		if (!cart.value) {
 			return {
 				enabled: false,

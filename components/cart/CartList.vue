@@ -2,8 +2,8 @@
 	<ul class="space-y-2">
 		<CartListItem
 			v-for="item in items"
-			:item="item"
 			:key="item.productId"
+			:item="item"
 		/>
 	</ul>
 </template>

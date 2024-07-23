@@ -3,8 +3,8 @@
 		<CartShippingRadioGroupOption
 			v-for="option in options"
 			:key="option.id"
-			:option="option"
 			v-model="model"
+			:option="option"
 			:disabled="!isOptionEnabled(option.id)"
 		/>
 	</div>

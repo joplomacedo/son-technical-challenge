@@ -1,12 +1,12 @@
 <template>
 	<label :class="[$style.root, attrsClass]">
 		<input
-			:class="$style.input"
 			v-model="model"
+			:class="$style.input"
 			v-bind="attrsRest"
 			type="radio"
-		/>
-		<span :class="$style.radio"></span>
+		>
+		<span :class="$style.radio"/>
 
 		<span :class="$style.label">
 			<slot>

@@ -28,8 +28,8 @@
 								:class="$style.stepper__btn"
 								size="xs"
 								shape="circle"
-								@click="handleQuantityInc(-1)"
 								:disabled="isCartBusy || displayQuantity < 1"
+								@click="handleQuantityInc(-1)"
 							>
 								<BaseIcon name="Minus" />
 							</BaseButton>
@@ -40,16 +40,16 @@
 								:class="$style.stepper__btn"
 								size="xs"
 								shape="circle"
-								@click="handleQuantityInc(1)"
 								:disabled="isCartBusy"
+								@click="handleQuantityInc(1)"
 							>
 								<BaseIcon name="Plus" />
 							</BaseButton>
 						</div>
 
 						<BaseSpinner
-							size="sm"
 							v-if="isItemMutating"
+							size="sm"
 						/>
 
 						<Transition name="slide-left">
@@ -62,10 +62,10 @@
 
 									<!-- TODO: create underline button variant -->
 									<button
+										v-if="stockQuantity !== item.quantity"
 										:class="$style.stockWarning__updateBtn"
 										class="underline cursor-pointer"
 										@click="() => updateItem(stockQuantity)"
-										v-if="stockQuantity !== item.quantity"
 									>
 										Update to {{ stockQuantity }}
 									</button>

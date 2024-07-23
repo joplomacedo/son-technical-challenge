@@ -1,16 +1,18 @@
 <template>
 	<div>
 		<header :class="$style.header">
-			<NuxtImg
-				src="img/logo/primary.svg"
-				alt="Logo"
-				width="100"
-				height="20"
-			/>
+			<NuxtLink to="/">
+				<NuxtImg
+					src="img/logo/primary.svg"
+					alt="Logo"
+					width="100"
+					height="20"
+				/>
+			</NuxtLink>
 			<nav>
 				<ul>
 					<li>
-						<nuxt-link to="/cart">My Shopping Cart</nuxt-link>
+						<NuxtLink to="/cart">My Shopping Cart</NuxtLink>
 					</li>
 				</ul>
 			</nav>

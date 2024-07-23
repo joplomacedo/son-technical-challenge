@@ -1,18 +1,6 @@
 <template>
 	<div>
-		<!-- <div
-			v-if="isPagePending"
-			class="grid place-content-center py-20"
-		>
-			<BaseSpinner />
-		</div> -->
-
-		<div v-if="isPageError"></div>
-
-		<div
-			v-else
-			:class="$style.cart"
-		>
+		<div :class="$style.cart">
 			<div :class="$style.cart__grid">
 				<div :class="$style.cart__main">
 					<div class="space-y-8">
@@ -45,8 +33,8 @@
 								<div v-if="deletedItems.length">
 									<div class="mb-4">
 										<span
-											@click="() => (isDeletedItemsOpen = !isDeletedItemsOpen)"
 											class="underline cursor-pointer text-sm"
+											@click="() => (isDeletedItemsOpen = !isDeletedItemsOpen)"
 										>
 											{{
 												isDeletedItemsOpen
@@ -81,26 +69,26 @@
 
 							<CartShippingRadioGroup
 								v-if="shippingMethodsStatus === 'success'"
-								:options="shippingMethods!"
-								:eligibleOptionsIds="cart!.eligibleShippingMethodsIds"
 								v-model="selectedShippingMethodId"
+								:options="shippingMethods!"
+								:eligible-options-ids="cart!.eligibleShippingMethodsIds"
 							/>
 						</div>
 					</div>
 				</div>
 
 				<div
-					:class="$style.cart__sideBar"
 					v-if="cart?.items.length"
+					:class="$style.cart__sideBar"
 				>
 					<CartPriceDetails class="mb-6" />
 
 					<BaseButton
-						class="block w-full"
 						v-tooltip="{
 							content: isCheckoutEnabled.reason,
 							disabled: isCheckoutEnabled.enabled,
 						}"
+						class="block w-full"
 						:disabled="!isCheckoutEnabled.enabled"
 						:loading="isCheckoutButtonLoading"
 						@click="handleCheckoutButtonClick"
@@ -159,31 +147,18 @@ const handleCheckoutButtonClick = () => {
 		return;
 	}
 
-	moveToCheckout();
+	navigateTo("/checkout");
 };
 
 function handlModalEmailFormClose() {
 	if (user.value.email) {
-		moveToCheckout();
+		navigateTo("/checkout");
 	} else {
 		isCheckoutButtonLoading.value = false;
 	}
 
 	isEmailModalFormOpen.value = false;
 }
-
-function moveToCheckout() {
-	alert("Move to checkout!");
-	setTimeout(() => {
-		window.location.reload();
-	}, 300);
-}
-
-const criticalComponents = [cartStatus, shippingMethodsStatus];
-
-const isPageError = computed(() =>
-	criticalComponents.some((status) => status.value === "error")
-);
 </script>
 
 <style module>
