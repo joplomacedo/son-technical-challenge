@@ -5,7 +5,7 @@
 			:class="$style.input"
 			v-bind="attrsRest"
 			type="text"
-		>
+		/>
 		<Icon
 			v-if="icon"
 			:class="$style.icon"

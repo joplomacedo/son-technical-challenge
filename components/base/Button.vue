@@ -1,6 +1,5 @@
 <template>
-	<component
-		:is="component"
+	<button
 		:class="[
 			$style.root,
 			{
@@ -10,6 +9,7 @@
 		:data-variant-size="size"
 		:data-variant-shape="shape"
 		:data-variant-color="color"
+		:type="type"
 	>
 		<div :class="$style.content">
 			<slot />
@@ -27,24 +27,24 @@
 				/>
 			</div>
 		</Transition>
-	</component>
+	</button>
 </template>
 
 <script setup lang="ts">
 withDefaults(
 	defineProps<{
-		component?: string | Component;
 		size?: "xs" | "sm" | "md" | "lg";
 		shape?: "rectangle" | "circle";
 		color?: "primary" | "secondary";
 		loading?: boolean;
+		type?: "button" | "submit" | "reset";
 	}>(),
 	{
-		component: "button",
 		size: "md",
 		shape: "rectangle",
 		color: "primary",
 		loading: false,
+		type: "button",
 	}
 );
 </script>
