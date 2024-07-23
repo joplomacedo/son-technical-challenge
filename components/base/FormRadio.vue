@@ -4,9 +4,10 @@
 			v-model="model"
 			:class="$style.input"
 			v-bind="attrsRest"
+			:value="value"
 			type="radio"
-		>
-		<span :class="$style.radio"/>
+		/>
+		<span :class="$style.radio" />
 
 		<span :class="$style.label">
 			<slot>
@@ -23,10 +24,12 @@ defineOptions({
 
 defineProps<{
 	label?: string;
+	value: string;
 }>();
 
-const { class: attrsClass, ...attrsRest } = useAttrs();
 const model = defineModel();
+
+const { class: attrsClass, ...attrsRest } = useAttrs();
 </script>
 
 <style module>

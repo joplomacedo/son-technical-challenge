@@ -119,10 +119,17 @@ const { user } = useUserStore();
 const { selectedShippingMethodId, isCheckoutEnabled, deletedItems } =
 	useCartStore();
 
-const { data: cart, status: cartStatus } = useCartQuery();
+const {
+	data: cart,
+	status: cartStatus,
+	suspense: cartSuspense,
+} = useCartQuery();
 
-const { data: shippingMethods, status: shippingMethodsStatus } =
-	useShippingMethodsQuery();
+const {
+	data: shippingMethods,
+	status: shippingMethodsStatus,
+	suspense: shippingMethodsSuspense,
+} = useShippingMethodsQuery();
 
 const isEmailModalFormOpen = ref(false);
 const isDeletedItemsOpen = ref(false);
@@ -159,6 +166,10 @@ function handlModalEmailFormClose() {
 
 	isEmailModalFormOpen.value = false;
 }
+
+onServerPrefetch(async () => {
+	await Promise.all([cartSuspense(), shippingMethodsSuspense()]);
+});
 </script>
 
 <style module>

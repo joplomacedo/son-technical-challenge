@@ -34,7 +34,6 @@
 					</div>
 
 					<BaseButton
-						:class="$style.stepper__btn"
 						size="xs"
 						:disabled="isCartBusy"
 						@click="() => handleAddToCart(item.quantity)"

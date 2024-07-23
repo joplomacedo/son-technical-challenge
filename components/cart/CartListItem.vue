@@ -195,7 +195,7 @@ const flushOnUnrelatedClick = () => {
 	debouncedUpdate.flush();
 };
 
-useEventListener(document.documentElement, "click", flushOnUnrelatedClick);
+useEventListener(document, "click", flushOnUnrelatedClick);
 </script>
 
 <style module>
