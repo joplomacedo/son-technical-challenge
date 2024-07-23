@@ -21,10 +21,6 @@ export const useCartStore = createSharedComposable(function () {
 		shippingMethodId: selectedShippingMethodId,
 	});
 
-	watch(selectedShippingMethodId, (newVal, oldVal) => {
-		console.log("selectedShippingMethodId changed", newVal, oldVal);
-	});
-
 	watchEffect(() => {
 		if (!selectedShippingMethodId.value) {
 			return;

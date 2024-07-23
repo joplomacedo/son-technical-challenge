@@ -74,7 +74,6 @@ const { user } = useUserStore();
 
 const handleFormSubmit = handleSubmit(
 	(values) => {
-		console.log("🚀 ~ handleFormSubmit ~ values:", values);
 		user.value.email = email.value;
 		emit("close");
 	},

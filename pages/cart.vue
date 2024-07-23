@@ -123,10 +123,6 @@ const {
 
 const { data: cart, status: cartStatus, suspense: cartSuspense } = cartQuery;
 
-watch(selectedShippingMethodId, (selectedShippingMethodId) => {
-	console.log(selectedShippingMethodId);
-});
-
 const {
 	data: shippingMethods,
 	status: shippingMethodsStatus,
