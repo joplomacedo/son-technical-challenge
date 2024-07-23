@@ -106,9 +106,6 @@
 </template>
 
 <script setup lang="ts">
-import { useCartQuery } from "~/queries/cart";
-import { useShippingMethodsQuery } from "~/queries/shipping-methods";
-
 useSeoMeta({
 	title: "FootFlare | Cart",
 	description: "Your shopping cart",
@@ -116,20 +113,25 @@ useSeoMeta({
 });
 
 const { user } = useUserStore();
-const { selectedShippingMethodId, isCheckoutEnabled, deletedItems } =
-	useCartStore();
-
 const {
-	data: cart,
-	status: cartStatus,
-	suspense: cartSuspense,
-} = useCartQuery();
+	selectedShippingMethodId,
+	isCheckoutEnabled,
+	deletedItems,
+	cartQuery,
+	shippingMethodsQuery,
+} = useCartStore();
+
+const { data: cart, status: cartStatus, suspense: cartSuspense } = cartQuery;
+
+watch(selectedShippingMethodId, (selectedShippingMethodId) => {
+	console.log(selectedShippingMethodId);
+});
 
 const {
 	data: shippingMethods,
 	status: shippingMethodsStatus,
 	suspense: shippingMethodsSuspense,
-} = useShippingMethodsQuery();
+} = shippingMethodsQuery;
 
 const isEmailModalFormOpen = ref(false);
 const isDeletedItemsOpen = ref(false);

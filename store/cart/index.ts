@@ -4,9 +4,7 @@ import { useShippingMethodsQuery } from "~/queries/shipping-methods";
 import useDeletedItems from "./useDeletedItems";
 import useIsCheckoutEnabled from "./useIsCheckoutEnabled";
 
-import createStore from "~/libs/createStore";
-
-export const useCartStore = createStore(function () {
+export const useCartStore = createSharedComposable(function () {
 	const cartQuery = useCartQuery();
 	const isCartBusy = useCartIsBusy();
 	const shippingMethodsQuery = useShippingMethodsQuery();
@@ -21,6 +19,10 @@ export const useCartStore = createStore(function () {
 		isCartBusy,
 		cart,
 		shippingMethodId: selectedShippingMethodId,
+	});
+
+	watch(selectedShippingMethodId, (newVal, oldVal) => {
+		console.log("selectedShippingMethodId changed", newVal, oldVal);
 	});
 
 	watchEffect(() => {
@@ -67,6 +69,7 @@ export const useCartStore = createStore(function () {
 		total,
 		isCheckoutEnabled,
 		deletedItems,
+		isCartBusy,
 		reset,
 	};
 });

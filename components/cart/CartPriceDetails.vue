@@ -35,11 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { useCartQuery, useCartIsBusy } from "~/queries/cart";
-
-const { data: cart } = useCartQuery();
-const isCartBusy = useCartIsBusy();
-const { total, selectedShippingMethod } = useCartStore();
+const {
+	total,
+	selectedShippingMethod,
+	cartQuery: { data: cart },
+	isCartBusy,
+} = useCartStore();
 </script>
 
 <style module>
