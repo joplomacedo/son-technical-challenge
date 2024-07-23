@@ -167,9 +167,9 @@ function handlModalEmailFormClose() {
 	isEmailModalFormOpen.value = false;
 }
 
-onServerPrefetch(async () => {
-	await Promise.all([cartSuspense(), shippingMethodsSuspense()]);
-});
+// onServerPrefetch(async () => {
+// 	await Promise.all([cartSuspense(), shippingMethodsSuspense()]);
+// });
 </script>
 
 <style module>
