@@ -53,10 +53,6 @@ export const useCartStore = createSharedComposable(function () {
 			: null;
 	});
 
-	const reset = () => {
-		selectedShippingMethodId.value = null;
-	};
-
 	return {
 		cartQuery,
 		shippingMethodsQuery,
@@ -66,6 +62,5 @@ export const useCartStore = createSharedComposable(function () {
 		isCheckoutEnabled,
 		deletedItems,
 		isCartBusy,
-		reset,
 	};
 });

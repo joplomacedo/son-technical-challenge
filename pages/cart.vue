@@ -25,31 +25,12 @@
 							>
 								<CartList
 									v-if="cart?.items.length"
-									:items="cart!.items"
+									:items="cart.items"
 								/>
 
-								<CartEmptyCallToAction v-if="!cart?.items.length" />
+								<CartEmptyCallToAction v-else />
 
-								<div v-if="deletedItems.length">
-									<div class="mb-4">
-										<span
-											class="underline cursor-pointer text-sm"
-											@click="() => (isDeletedItemsOpen = !isDeletedItemsOpen)"
-										>
-											{{
-												isDeletedItemsOpen
-													? "Hide deleted items"
-													: "See deleted items"
-											}}
-
-											<span> ({{ deletedItems.length }}) </span>
-										</span>
-									</div>
-
-									<div v-if="isDeletedItemsOpen">
-										<CartDeletedList :items="deletedItems" />
-									</div>
-								</div>
+								<CartDeletedListPanel v-if="deletedItems.length" />
 							</div>
 						</div>
 
@@ -130,13 +111,6 @@ const {
 } = shippingMethodsQuery;
 
 const isEmailModalFormOpen = ref(false);
-const isDeletedItemsOpen = ref(false);
-
-watch(deletedItems, (deletedItems) => {
-	if (!deletedItems.length) {
-		isDeletedItemsOpen.value = false;
-	}
-});
 
 const isCheckoutButtonLoading = ref(false);
 
