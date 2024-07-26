@@ -20,9 +20,11 @@ const componentResolvers = {
 	Minus: () => resolveComponent("BaseIconIconsMinus"),
 } as const;
 
-const props = defineProps<{
+export type Props = {
 	name: keyof typeof componentResolvers;
-}>();
+};
+
+const props = defineProps<Props>();
 
 const component = computed(() => componentResolvers[props.name]());
 </script>

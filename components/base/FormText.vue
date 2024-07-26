@@ -6,7 +6,7 @@
 			v-bind="attrsRest"
 			type="text"
 		/>
-		<Icon
+		<BaseIcon
 			v-if="icon"
 			:class="$style.icon"
 			:name="icon"
@@ -15,8 +15,10 @@
 </template>
 
 <script setup lang="ts">
+import type { Props } from "./Icon/index.vue";
+
 defineProps<{
-	icon?: string;
+	icon?: Props["name"];
 }>();
 
 defineOptions({
