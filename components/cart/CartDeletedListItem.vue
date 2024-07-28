@@ -49,9 +49,8 @@
 <script setup lang="ts">
 /* TODO: figure best way to share code with CartListItem */
 import type { CartItem } from "@/queries/cart";
-import { useAddItemMutation } from "~/queries/cart";
 
-const { isCartBusy } = useCartStore();
+const { isCartBusy, addItemMutation } = useCartContext();
 
 const props = defineProps<{
 	item: CartItem;
@@ -60,12 +59,17 @@ const props = defineProps<{
 const imgSize = 100;
 const imgSizeWithUnit = `${imgSize}px`;
 
-const { mutate: addItem, status: addItemStatus } = useAddItemMutation(
-	props.item.id
-);
+const { mutate: addItem, status: addItemStatus } = useMutation({
+	mutationFn: (quantity: number) =>
+		addItemMutation.mutateAsync({
+			productId: props.item.product.id,
+			quantity,
+			safe: true,
+		}),
+});
 
 const handleAddToCart = (quantity: number) => {
-	addItem({ quantity, safe: true });
+	addItem(quantity);
 };
 </script>
 

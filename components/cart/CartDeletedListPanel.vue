@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-const { deletedItems } = useCartStore();
+const { deletedItems } = useCartContext();
 
 const isDeletedItemsOpen = ref(false);
 

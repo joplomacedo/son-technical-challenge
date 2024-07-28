@@ -19,24 +19,24 @@ const useCartIsBusy = () => {
 
 const useCartQueryKeys = () => {
 	const { user } = useUserStore();
-	const userKeyUnit = computed(() => ({
+
+	const userKeyUnit = useState("user-key", () => ({
 		id: user.value.id,
 		currency: user.value.currency,
 	}));
 
+	watch(user, () => {
+		userKeyUnit.value = {
+			id: user.value.id,
+			currency: user.value.currency,
+		};
+	});
+
 	const queryKeys = {
-		cart: () => [userKeyUnit, "cart"],
-		updateItem: (productId: string) => [
-			...queryKeys.cart(),
-			productId,
-			"update",
-		],
-		deleteItem: (productId: string) => [
-			...queryKeys.cart(),
-			productId,
-			"delete",
-		],
-		addItem: (productId: string) => [...queryKeys.cart(), productId, "add"],
+		cart: () => [userKeyUnit, "cart"] as const,
+		updateItem: () => [...queryKeys.cart(), "update"] as const,
+		deleteItem: () => [...queryKeys.cart(), "delete"] as const,
+		addItem: () => [...queryKeys.cart(), "add"] as const,
 	};
 
 	return queryKeys;
@@ -60,16 +60,22 @@ function useCartQuery() {
 	});
 }
 
-function useUpdateItemMutation(productId: string) {
+function useUpdateItemMutation() {
 	const queryClient = useQueryClient();
 	const { user } = useUserStore();
 	const queryKeys = useCartQueryKeys();
 	const cartQueryKey = queryKeys.cart();
-	const updateItemQueryKey = queryKeys.updateItem(productId);
+	const updateItemQueryKey = queryKeys.updateItem();
 
 	return useMutation({
 		mutationKey: updateItemQueryKey,
-		mutationFn: (quantity: number) =>
+		mutationFn: ({
+			productId,
+			quantity,
+		}: {
+			productId: string;
+			quantity: number;
+		}) =>
 			$fetch("/api/carts/items/update", {
 				method: "post",
 				body: {
@@ -94,6 +100,7 @@ function useUpdateItemMutation(productId: string) {
 			if (!context) return;
 
 			const { lockedCartQueryKey } = context;
+			const { productId } = variables;
 
 			if (
 				error.statusCode === STATUS_CODES.useUpdateItemMutation.invalidQuantity
@@ -125,16 +132,16 @@ function useUpdateItemMutation(productId: string) {
 	});
 }
 
-function useDeleteItemMutation(productId: string) {
+function useDeleteItemMutation() {
 	const { user } = useUserStore();
 	const queryClient = useQueryClient();
 	const queryKeys = useCartQueryKeys();
 	const cartQueryKey = queryKeys.cart();
-	const deleteItemQueryKey = queryKeys.deleteItem(productId);
+	const deleteItemQueryKey = queryKeys.deleteItem();
 
 	return useMutation({
 		mutationKey: deleteItemQueryKey,
-		mutationFn: () =>
+		mutationFn: ({ productId }: { productId: string }) =>
 			$fetch("/api/carts/items/delete", {
 				method: "post",
 				body: {
@@ -159,20 +166,22 @@ function useDeleteItemMutation(productId: string) {
 	});
 }
 
-function useAddItemMutation(productId: string) {
+function useAddItemMutation() {
 	const queryClient = useQueryClient();
 	const { user } = useUserStore();
 	const queryKeys = useCartQueryKeys();
 	const cartQueryKey = queryKeys.cart();
-	const addItemQueryKey = queryKeys.addItem(productId);
+	const addItemQueryKey = queryKeys.addItem();
 
 	return useMutation({
 		mutationKey: addItemQueryKey,
 		mutationFn: ({
 			quantity,
+			productId,
 			safe = false,
 		}: {
 			quantity: number;
+			productId: string;
 			safe?: boolean;
 		}) =>
 			$fetch("/api/carts/items/add", {
@@ -215,9 +224,9 @@ export {
 	useUpdateItemMutation,
 	useDeleteItemMutation,
 	useAddItemMutation,
-	STATUS_CODES,
 	useCartQueryKeys,
 	useCartIsBusy,
+	STATUS_CODES,
 };
 
 export type {

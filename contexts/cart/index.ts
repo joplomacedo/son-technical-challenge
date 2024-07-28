@@ -1,11 +1,21 @@
-import { useCartQuery, useCartIsBusy } from "~/queries/cart";
+import {
+	useCartQuery,
+	useCartIsBusy,
+	useAddItemMutation,
+	useDeleteItemMutation,
+	useUpdateItemMutation,
+} from "~/queries/cart";
 import { useShippingMethodsQuery } from "~/queries/shipping-methods";
 
 import useDeletedItems from "./useDeletedItems";
 import useIsCheckoutEnabled from "./useIsCheckoutEnabled";
+import createContext from "~/libs/createContext";
 
-export const useCartStore = createSharedComposable(function () {
+export const useCartContext = createContext(function () {
 	const cartQuery = useCartQuery();
+	const addItemMutation = useAddItemMutation();
+	const deleteItemMutation = useDeleteItemMutation();
+	const updateItemMutation = useUpdateItemMutation();
 	const isCartBusy = useCartIsBusy();
 	const shippingMethodsQuery = useShippingMethodsQuery();
 
@@ -55,6 +65,9 @@ export const useCartStore = createSharedComposable(function () {
 
 	return {
 		cartQuery,
+		addItemMutation,
+		deleteItemMutation,
+		updateItemMutation,
 		shippingMethodsQuery,
 		selectedShippingMethodId,
 		selectedShippingMethod,

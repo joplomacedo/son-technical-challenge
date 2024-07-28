@@ -93,13 +93,9 @@
 
 <script setup lang="ts">
 import type { CartItem } from "@/queries/cart";
-import {
-	useUpdateItemMutation,
-	useDeleteItemMutation,
-	STATUS_CODES,
-} from "~/queries/cart";
+import { STATUS_CODES } from "@/queries/cart";
 
-const { isCartBusy } = useCartStore();
+const { isCartBusy, updateItemMutation, deleteItemMutation } = useCartContext();
 
 const props = defineProps<{
 	item: CartItem;
@@ -110,15 +106,36 @@ const imgSizeWithUnit = `${imgSize}px`;
 
 const {
 	error: updateItemError,
-	mutate: updateItemMutate,
+	mutate: updateItem,
 	status: updateItemStatus,
-} = useUpdateItemMutation(props.item.productId);
+} = useMutation({
+	mutationFn: (quantity: number) => {
+		return updateItemMutation.mutateAsync({
+			productId: props.item.id,
+			quantity,
+		});
+	},
+	onError(error: any) {
+		if (
+			error.data.statusCode ===
+			STATUS_CODES.useUpdateItemMutation.invalidQuantity
+		) {
+			displayQuantity.value = props.item.quantity;
+		}
+	},
+});
 
 const {
 	error: deleteItemError,
 	mutate: deleteItem,
 	status: deleteItemStatus,
-} = useDeleteItemMutation(props.item.productId);
+} = useMutation({
+	mutationFn: () => {
+		return deleteItemMutation.mutateAsync({
+			productId: props.item.id,
+		});
+	},
+});
 
 const isItemMutating = computed(() => {
 	return [updateItemStatus, deleteItemStatus].some(
@@ -150,19 +167,6 @@ const isStockVisible = computed(() => {
 			STATUS_CODES.useUpdateItemMutation.invalidQuantity
 	);
 });
-
-function updateItem(quantity: number) {
-	return updateItemMutate(quantity, {
-		onError(error) {
-			if (
-				error.data.statusCode ===
-				STATUS_CODES.useUpdateItemMutation.invalidQuantity
-			) {
-				displayQuantity.value = props.item.quantity;
-			}
-		},
-	});
-}
 
 const debouncedUpdate = debounce((newQuantity) => {
 	if (newQuantity < 1) {

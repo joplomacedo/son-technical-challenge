@@ -3,7 +3,11 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 
 	imports: {
-		dirs: ["composables/**/use*.{ts,js}", "store/**/index.{ts,js}"],
+		dirs: [
+			"composables/**/use*.{ts,js}",
+			"stores/**/index.{ts,js}",
+			"contexts/**/index.{ts,js}",
+		],
 	},
 
 	modules: [
@@ -18,5 +22,4 @@ export default defineNuxtConfig({
 	],
 
 	compatibilityDate: "2024-07-16",
-	ssr: false,
 });

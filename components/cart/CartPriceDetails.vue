@@ -40,7 +40,7 @@ const {
 	selectedShippingMethod,
 	cartQuery: { data: cart },
 	isCartBusy,
-} = useCartStore();
+} = useCartContext();
 </script>
 
 <style module>

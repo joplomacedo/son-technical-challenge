@@ -80,7 +80,7 @@
 
 			<CartModalEmailForm
 				v-if="isEmailModalFormOpen"
-				@close="handlModalEmailFormClose"
+				@close="handleModalEmailFormClose"
 			/>
 		</div>
 	</div>
@@ -94,21 +94,18 @@ useSeoMeta({
 });
 
 const { user } = useUserStore();
+
 const {
 	selectedShippingMethodId,
 	isCheckoutEnabled,
 	deletedItems,
-	cartQuery,
-	shippingMethodsQuery,
-} = useCartStore();
-
-const { data: cart, status: cartStatus, suspense: cartSuspense } = cartQuery;
-
-const {
-	data: shippingMethods,
-	status: shippingMethodsStatus,
-	suspense: shippingMethodsSuspense,
-} = shippingMethodsQuery;
+	cartQuery: { data: cart, status: cartStatus, suspense: cartSuspense },
+	shippingMethodsQuery: {
+		data: shippingMethods,
+		status: shippingMethodsStatus,
+		suspense: shippingMethodsSuspense,
+	},
+} = useCartContext();
 
 const isEmailModalFormOpen = ref(false);
 
@@ -129,7 +126,7 @@ const handleCheckoutButtonClick = () => {
 	navigateTo("/checkout");
 };
 
-function handlModalEmailFormClose() {
+function handleModalEmailFormClose() {
 	if (user.value.email) {
 		navigateTo("/checkout");
 	} else {
@@ -139,9 +136,9 @@ function handlModalEmailFormClose() {
 	isEmailModalFormOpen.value = false;
 }
 
-// onServerPrefetch(async () => {
-// 	await Promise.all([cartSuspense(), shippingMethodsSuspense()]);
-// });
+onServerPrefetch(async () => {
+	await Promise.all([cartSuspense(), shippingMethodsSuspense()]);
+});
 </script>
 
 <style module>
